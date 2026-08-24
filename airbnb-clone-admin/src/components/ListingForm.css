@@ -1,0 +1,138 @@
+.listing-form {
+  background: #fff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: 32px;
+  max-width: 640px;
+  margin: 32px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.listing-form h1 {
+  font-size: 20px;
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.form-row label,
+.description-field,
+.add-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.form-row input,
+.form-row select,
+.description-field textarea,
+.add-row input {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--color-text);
+  font-weight: 400;
+  text-transform: none;
+}
+
+.beds-baths-type {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.4fr;
+  gap: 8px;
+}
+
+.add-row {
+  display: flex;
+  gap: 8px;
+}
+
+.add-row input {
+  flex: 1;
+}
+
+.add-row .btn {
+  padding: 10px 16px;
+}
+
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--color-bg-alt);
+  border-radius: 999px;
+  padding: 4px 6px 4px 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+  color: var(--color-text);
+}
+
+.chip button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  line-height: 1;
+  color: var(--color-text-muted);
+  padding: 2px 4px;
+}
+
+.description-field textarea {
+  resize: vertical;
+}
+
+.field-error {
+  color: var(--color-danger);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: none;
+}
+
+.form-submit-error {
+  color: var(--color-danger);
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.form-actions .btn {
+  min-width: 140px;
+}
+
+@media (max-width: 560px) {
+  .form-row,
+  .beds-baths-type {
+    grid-template-columns: 1fr;
+  }
+  .listing-form {
+    padding: 20px;
+    margin: 20px 12px;
+  }
+}

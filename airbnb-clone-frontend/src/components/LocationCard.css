@@ -1,0 +1,61 @@
+.listing-card {
+  display: flex;
+  gap: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  transition: box-shadow 0.15s ease;
+}
+
+.listing-card:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.listing-card-img {
+  width: 160px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.listing-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.listing-card-top {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--color-text-muted);
+}
+
+.listing-card-body h3 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.listing-card-amenities,
+.listing-card-reviews {
+  margin: 0;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.listing-card-price {
+  margin: 4px 0 0;
+  font-size: 14px;
+}
+
+@media (max-width: 480px) {
+  .listing-card {
+    flex-direction: column;
+  }
+  .listing-card-img {
+    width: 100%;
+    height: 160px;
+  }
+}

@@ -1,0 +1,29 @@
+.location-page {
+  padding: 32px 24px 60px;
+}
+
+.location-page h1 {
+  font-size: 22px;
+  margin-bottom: 24px;
+}
+
+.location-status {
+  color: var(--color-text-muted);
+  font-size: 14px;
+}
+
+.location-error {
+  color: var(--color-primary);
+}
+
+.location-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+@media (max-width: 720px) {
+  .location-grid {
+    grid-template-columns: 1fr;
+  }
+}
