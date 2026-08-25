@@ -1,7 +1,19 @@
+/**
+ * ListingForm – shared form used by both CreateListing and UpdateListing.
+ *
+ * Sections (visually separated):
+ *   1. Basic Info    – title, type, location
+ *   2. Capacity      – bedrooms, bathrooms, guests
+ *   3. Pricing       – price/night, weekly discount, cleaning fee, service fee, occupancy taxes
+ *   4. Media         – image URLs (chip tags)
+ *   5. Amenities     – amenity chips
+ *   6. Description   – textarea
+ */
+
 import { useState } from 'react';
 import './ListingForm.css';
 
-const emptyForm = {
+const EMPTY_FORM = {
   title: '',
   location: '',
   type: 'Entire apartment',
@@ -16,75 +28,87 @@ const emptyForm = {
   occupancyTaxes: 0,
 };
 
-// shared by Create Listing and Update Listing pages - keeps both forms identical
+const ACCOMMODATION_TYPES = [
+  'Entire apartment',
+  'Entire house',
+  'Entire studio',
+  'Private room',
+  'Shared room',
+];
+
 export default function ListingForm({ initialValues, onSubmit, submitLabel, onCancel }) {
-  const [form, setForm] = useState({ ...emptyForm, ...initialValues });
+  const [form, setForm] = useState({ ...EMPTY_FORM, ...initialValues });
   const [amenityInput, setAmenityInput] = useState('');
-  const [amenities, setAmenities] = useState(initialValues?.amenities || []);
+  const [amenities, setAmenities] = useState(initialValues?.amenities ?? []);
   const [imageInput, setImageInput] = useState('');
-  const [images, setImages] = useState(initialValues?.images || []);
+  const [images, setImages] = useState(initialValues?.images ?? []);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  function updateField(field, value) {
+  function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
+    // Clear individual field error on change
+    if (errors[field]) setErrors((e) => ({ ...e, [field]: undefined }));
   }
 
+  /* ── Amenities ── */
   function addAmenity() {
-    const value = amenityInput.trim();
-    if (!value) return;
-    setAmenities((prev) => [...prev, value]);
+    const v = amenityInput.trim();
+    if (!v || amenities.includes(v)) return;
+    setAmenities((prev) => [...prev, v]);
     setAmenityInput('');
   }
 
-  function removeAmenity(index) {
-    setAmenities((prev) => prev.filter((_, i) => i !== index));
+  function removeAmenity(i) {
+    setAmenities((prev) => prev.filter((_, idx) => idx !== i));
   }
 
+  /* ── Images ── */
   function addImage() {
-    const value = imageInput.trim();
-    if (!value) return;
-    setImages((prev) => [...prev, value]);
+    const v = imageInput.trim();
+    if (!v) return;
+    setImages((prev) => [...prev, v]);
     setImageInput('');
   }
 
-  function removeImage(index) {
-    setImages((prev) => prev.filter((_, i) => i !== index));
+  function removeImage(i) {
+    setImages((prev) => prev.filter((_, idx) => idx !== i));
   }
 
+  /* ── Validation ── */
   function validate() {
-    const nextErrors = {};
-    if (!form.title.trim()) nextErrors.title = 'Title is required.';
-    if (!form.location.trim()) nextErrors.location = 'Location is required.';
-    if (!form.description.trim()) nextErrors.description = 'Description is required.';
-    if (!form.price || Number(form.price) <= 0) nextErrors.price = 'Enter a price greater than 0.';
-    if (!form.bedrooms || Number(form.bedrooms) < 0) nextErrors.bedrooms = 'Enter a valid number of bedrooms.';
-    if (!form.bathrooms || Number(form.bathrooms) < 0) nextErrors.bathrooms = 'Enter a valid number of bathrooms.';
-    if (!form.guests || Number(form.guests) < 1) nextErrors.guests = 'Enter at least 1 guest.';
-    if (images.length === 0) nextErrors.images = 'Add at least one image URL.';
-
-    setErrors(nextErrors);
-    return Object.keys(nextErrors).length === 0;
+    const e = {};
+    if (!form.title.trim())       e.title       = 'Title is required.';
+    if (!form.location.trim())    e.location     = 'Location is required.';
+    if (!form.description.trim()) e.description  = 'Description is required.';
+    if (!form.price || Number(form.price) <= 0)
+                                  e.price        = 'Enter a price greater than 0.';
+    if (Number(form.bedrooms) < 0) e.bedrooms    = 'Cannot be negative.';
+    if (Number(form.bathrooms) < 0) e.bathrooms  = 'Cannot be negative.';
+    if (Number(form.guests) < 1)   e.guests      = 'At least 1 guest.';
+    if (images.length === 0)       e.images      = 'Add at least one image URL.';
+    setErrors(e);
+    return Object.keys(e).length === 0;
   }
 
+  /* ── Submit ── */
   async function handleSubmit(e) {
     e.preventDefault();
     setSubmitError('');
-
     if (!validate()) return;
 
     setSubmitting(true);
     try {
       await onSubmit({
         ...form,
-        bedrooms: Number(form.bedrooms),
-        bathrooms: Number(form.bathrooms),
-        guests: Number(form.guests),
-        price: Number(form.price),
+        bedrooms:      Number(form.bedrooms),
+        bathrooms:     Number(form.bathrooms),
+        guests:        Number(form.guests),
+        price:         Number(form.price),
         weeklyDiscount: Number(form.weeklyDiscount) || 0,
-        cleaningFee: Number(form.cleaningFee) || 0,
-        serviceFee: Number(form.serviceFee) || 0,
+        cleaningFee:   Number(form.cleaningFee)    || 0,
+        serviceFee:    Number(form.serviceFee)     || 0,
         occupancyTaxes: Number(form.occupancyTaxes) || 0,
         amenities,
         images,
@@ -96,204 +120,369 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
     }
   }
 
+  const isEdit = submitLabel !== 'Publish Listing';
+
   return (
-    <form className="listing-form" onSubmit={handleSubmit} noValidate>
-      <div>
-        <h1 className="listing-form__title">
-          {submitLabel === 'Save' ? 'Create a New Listing' : 'Update Listing'}
-        </h1>
-        <p className="listing-form__subtitle">
-          {submitLabel === 'Save'
-            ? 'Fill in the details to publish your property.'
-            : 'Edit the details below and save your changes.'}
-        </p>
+    <form className="lf-form" onSubmit={handleSubmit} noValidate>
+
+      {/* ── Form header ── */}
+      <div className="lf-header">
+        <div className="lf-header__icon" aria-hidden="true">
+          {isEdit ? '✏️' : '🏠'}
+        </div>
+        <div>
+          <h1 className="lf-header__title">
+            {isEdit ? 'Update Listing' : 'Create a New Listing'}
+          </h1>
+          <p className="lf-header__subtitle">
+            {isEdit
+              ? 'Edit the details below and save your changes.'
+              : 'Fill in all sections below to publish your property.'}
+          </p>
+        </div>
       </div>
 
-      <div className="form-row">
-        <label>
-          Title
-          <input value={form.title} onChange={(e) => updateField('title', e.target.value)} />
-          {errors.title && <span className="field-error">{errors.title}</span>}
-        </label>
+      {/* ════════════════════════════
+          SECTION 1 – Basic Info
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">1</span>
+          Basic Info
+        </h2>
 
-        <div className="beds-baths-type">
-          <label>
-            Beds
+        {/* Title – full width */}
+        <div className="lf-field lf-field--full">
+          <label className="lf-label" htmlFor="lf-title">Property title</label>
+          <input
+            id="lf-title"
+            className={`lf-input${errors.title ? ' lf-input--error' : ''}`}
+            type="text"
+            placeholder="e.g. Modern Apartment in Cape Town"
+            value={form.title}
+            onChange={(e) => set('title', e.target.value)}
+          />
+          {errors.title && <p className="lf-error">{errors.title}</p>}
+        </div>
+
+        {/* Type + Location – 2 cols */}
+        <div className="lf-row">
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-type">Property type</label>
+            <select
+              id="lf-type"
+              className="lf-input lf-select"
+              value={form.type}
+              onChange={(e) => set('type', e.target.value)}
+            >
+              {ACCOMMODATION_TYPES.map((t) => (
+                <option key={t}>{t}</option>
+              ))}
+            </select>
+          </div>
+
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-location">Location / City</label>
             <input
+              id="lf-location"
+              className={`lf-input${errors.location ? ' lf-input--error' : ''}`}
+              type="text"
+              placeholder="e.g. Cape Town"
+              value={form.location}
+              onChange={(e) => set('location', e.target.value)}
+            />
+            {errors.location && <p className="lf-error">{errors.location}</p>}
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════
+          SECTION 2 – Capacity
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">2</span>
+          Capacity
+        </h2>
+
+        <div className="lf-row lf-row--3">
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-bedrooms">Bedrooms</label>
+            <input
+              id="lf-bedrooms"
+              className={`lf-input${errors.bedrooms ? ' lf-input--error' : ''}`}
               type="number"
               min="0"
               value={form.bedrooms}
-              onChange={(e) => updateField('bedrooms', e.target.value)}
+              onChange={(e) => set('bedrooms', e.target.value)}
             />
-          </label>
-          <label>
-            Baths
+            {errors.bedrooms && <p className="lf-error">{errors.bedrooms}</p>}
+          </div>
+
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-bathrooms">Bathrooms</label>
             <input
+              id="lf-bathrooms"
+              className={`lf-input${errors.bathrooms ? ' lf-input--error' : ''}`}
               type="number"
               min="0"
               value={form.bathrooms}
-              onChange={(e) => updateField('bathrooms', e.target.value)}
+              onChange={(e) => set('bathrooms', e.target.value)}
             />
-          </label>
-          <label>
-            Type
-            <select value={form.type} onChange={(e) => updateField('type', e.target.value)}>
-              <option>Entire apartment</option>
-              <option>Entire house</option>
-              <option>Private room</option>
-              <option>Shared room</option>
-            </select>
-          </label>
+            {errors.bathrooms && <p className="lf-error">{errors.bathrooms}</p>}
+          </div>
+
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-guests">Max guests</label>
+            <input
+              id="lf-guests"
+              className={`lf-input${errors.guests ? ' lf-input--error' : ''}`}
+              type="number"
+              min="1"
+              value={form.guests}
+              onChange={(e) => set('guests', e.target.value)}
+            />
+            {errors.guests && <p className="lf-error">{errors.guests}</p>}
+          </div>
         </div>
-      </div>
-      {(errors.bedrooms || errors.bathrooms) && (
-        <span className="field-error">{errors.bedrooms || errors.bathrooms}</span>
+      </section>
+
+      {/* ════════════════════════════
+          SECTION 3 – Pricing
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">3</span>
+          Pricing
+        </h2>
+
+        {/* Price – highlighted */}
+        <div className="lf-field lf-field--price">
+          <label className="lf-label" htmlFor="lf-price">
+            Price per night
+            <span className="lf-label-hint">ZAR (R)</span>
+          </label>
+          <div className="lf-price-wrap">
+            <span className="lf-price-prefix" aria-hidden="true">R</span>
+            <input
+              id="lf-price"
+              className={`lf-input lf-input--price${errors.price ? ' lf-input--error' : ''}`}
+              type="number"
+              min="0"
+              placeholder="0"
+              value={form.price}
+              onChange={(e) => set('price', e.target.value)}
+            />
+          </div>
+          {errors.price && <p className="lf-error">{errors.price}</p>}
+        </div>
+
+        <div className="lf-row lf-row--3">
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-discount">
+              Weekly discount
+              <span className="lf-label-hint">%</span>
+            </label>
+            <input
+              id="lf-discount"
+              className="lf-input"
+              type="number"
+              min="0"
+              max="100"
+              value={form.weeklyDiscount}
+              onChange={(e) => set('weeklyDiscount', e.target.value)}
+            />
+          </div>
+
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-cleaning">
+              Cleaning fee
+              <span className="lf-label-hint">R</span>
+            </label>
+            <input
+              id="lf-cleaning"
+              className="lf-input"
+              type="number"
+              min="0"
+              value={form.cleaningFee}
+              onChange={(e) => set('cleaningFee', e.target.value)}
+            />
+          </div>
+
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-service">
+              Service fee
+              <span className="lf-label-hint">R</span>
+            </label>
+            <input
+              id="lf-service"
+              className="lf-input"
+              type="number"
+              min="0"
+              value={form.serviceFee}
+              onChange={(e) => set('serviceFee', e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="lf-row" style={{ maxWidth: '340px' }}>
+          <div className="lf-field">
+            <label className="lf-label" htmlFor="lf-taxes">
+              Occupancy taxes
+              <span className="lf-label-hint">R</span>
+            </label>
+            <input
+              id="lf-taxes"
+              className="lf-input"
+              type="number"
+              min="0"
+              value={form.occupancyTaxes}
+              onChange={(e) => set('occupancyTaxes', e.target.value)}
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ════════════════════════════
+          SECTION 4 – Photos
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">4</span>
+          Photos
+        </h2>
+        <p className="lf-section__desc">
+          Add image URLs for your property. The first image will be the cover photo.
+        </p>
+
+        <div className="lf-chip-add">
+          <input
+            className="lf-input"
+            type="url"
+            placeholder="https://images.unsplash.com/…"
+            value={imageInput}
+            onChange={(e) => setImageInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addImage(); } }}
+            aria-label="Image URL"
+          />
+          <button type="button" className="btn btn-accent btn-sm" onClick={addImage}>
+            Add photo
+          </button>
+        </div>
+        {errors.images && <p className="lf-error">{errors.images}</p>}
+
+        {images.length > 0 && (
+          <div className="lf-photo-grid">
+            {images.map((img, i) => (
+              <div key={i} className="lf-photo-thumb">
+                <img src={img} alt={`Photo ${i + 1}`} loading="lazy" />
+                {i === 0 && <span className="lf-photo-cover">Cover</span>}
+                <button
+                  type="button"
+                  className="lf-photo-remove"
+                  onClick={() => removeImage(i)}
+                  aria-label={`Remove photo ${i + 1}`}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ════════════════════════════
+          SECTION 5 – Amenities
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">5</span>
+          Amenities
+        </h2>
+        <p className="lf-section__desc">
+          List the features your property offers (e.g. Wifi, Pool, Kitchen).
+        </p>
+
+        <div className="lf-chip-add">
+          <input
+            className="lf-input"
+            type="text"
+            placeholder="e.g. Wifi"
+            value={amenityInput}
+            onChange={(e) => setAmenityInput(e.target.value)}
+            onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); addAmenity(); } }}
+            aria-label="Amenity name"
+          />
+          <button type="button" className="btn btn-accent btn-sm" onClick={addAmenity}>
+            Add
+          </button>
+        </div>
+
+        {amenities.length > 0 && (
+          <div className="lf-chips">
+            {amenities.map((a, i) => (
+              <span key={i} className="lf-chip">
+                {a}
+                <button
+                  type="button"
+                  onClick={() => removeAmenity(i)}
+                  aria-label={`Remove ${a}`}
+                >
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+        )}
+      </section>
+
+      {/* ════════════════════════════
+          SECTION 6 – Description
+      ════════════════════════════ */}
+      <section className="lf-section">
+        <h2 className="lf-section__title">
+          <span className="lf-section__num">6</span>
+          Description
+        </h2>
+
+        <div className="lf-field lf-field--full">
+          <label className="lf-label" htmlFor="lf-desc">
+            Tell guests about your place
+          </label>
+          <textarea
+            id="lf-desc"
+            className={`lf-input lf-textarea${errors.description ? ' lf-input--error' : ''}`}
+            rows={6}
+            placeholder="Describe the space, neighbourhood and what makes your listing special…"
+            value={form.description}
+            onChange={(e) => set('description', e.target.value)}
+          />
+          {errors.description && <p className="lf-error">{errors.description}</p>}
+        </div>
+      </section>
+
+      {/* ── Submit error banner ── */}
+      {submitError && (
+        <div className="lf-submit-error" role="alert">
+          ⚠ {submitError}
+        </div>
       )}
 
-      <div className="form-row">
-        <label>
-          Location
-          <input value={form.location} onChange={(e) => updateField('location', e.target.value)} />
-          {errors.location && <span className="field-error">{errors.location}</span>}
-        </label>
-
-        <label>
-          Price per night (R)
-          <input
-            type="number"
-            min="0"
-            value={form.price}
-            onChange={(e) => updateField('price', e.target.value)}
-          />
-          {errors.price && <span className="field-error">{errors.price}</span>}
-        </label>
-      </div>
-
-      <div className="form-row">
-        <label>
-          Guests
-          <input
-            type="number"
-            min="1"
-            value={form.guests}
-            onChange={(e) => updateField('guests', e.target.value)}
-          />
-          {errors.guests && <span className="field-error">{errors.guests}</span>}
-        </label>
-      </div>
-
-      <div className="form-row">
-        <label className="add-field">
-          Amenities
-          <div className="add-row">
-            <input
-              value={amenityInput}
-              onChange={(e) => setAmenityInput(e.target.value)}
-              placeholder="e.g. wifi"
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addAmenity())}
-            />
-            <button type="button" className="btn btn-primary" onClick={addAmenity}>
-              Add
-            </button>
-          </div>
-          <div className="chip-list">
-            {amenities.map((a, i) => (
-              <span key={`${a}-${i}`} className="chip">
-                {a}
-                <button type="button" onClick={() => removeAmenity(i)} aria-label={`Remove ${a}`}>
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        </label>
-
-        <label className="add-field">
-          Image URL
-          <div className="add-row">
-            <input
-              value={imageInput}
-              onChange={(e) => setImageInput(e.target.value)}
-              placeholder="https://…"
-              onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addImage())}
-            />
-            <button type="button" className="btn btn-primary" onClick={addImage}>
-              Add
-            </button>
-          </div>
-          {errors.images && <span className="field-error">{errors.images}</span>}
-          <div className="chip-list">
-            {images.map((img, i) => (
-              <span key={`${img}-${i}`} className="chip chip-image">
-                Image {i + 1}
-                <button type="button" onClick={() => removeImage(i)} aria-label={`Remove image ${i + 1}`}>
-                  ×
-                </button>
-              </span>
-            ))}
-          </div>
-        </label>
-      </div>
-
-      <div className="form-row">
-        <label>
-          Weekly discount (%)
-          <input
-            type="number"
-            min="0"
-            value={form.weeklyDiscount}
-            onChange={(e) => updateField('weeklyDiscount', e.target.value)}
-          />
-        </label>
-        <label>
-          Cleaning fee (R)
-          <input
-            type="number"
-            min="0"
-            value={form.cleaningFee}
-            onChange={(e) => updateField('cleaningFee', e.target.value)}
-          />
-        </label>
-      </div>
-
-      <div className="form-row">
-        <label>
-          Service fee (R)
-          <input
-            type="number"
-            min="0"
-            value={form.serviceFee}
-            onChange={(e) => updateField('serviceFee', e.target.value)}
-          />
-        </label>
-        <label>
-          Occupancy taxes (R)
-          <input
-            type="number"
-            min="0"
-            value={form.occupancyTaxes}
-            onChange={(e) => updateField('occupancyTaxes', e.target.value)}
-          />
-        </label>
-      </div>
-
-      <label className="description-field">
-        Description
-        <textarea
-          rows={5}
-          value={form.description}
-          onChange={(e) => updateField('description', e.target.value)}
-        />
-        {errors.description && <span className="field-error">{errors.description}</span>}
-      </label>
-
-      {submitError && <p className="form-submit-error">{submitError}</p>}
-
-      <div className="form-actions">
-        <button type="submit" className="btn btn-primary" disabled={submitting}>
+      {/* ── Action buttons ── */}
+      <div className="lf-actions">
+        <button
+          type="submit"
+          className="btn btn-primary lf-actions__submit"
+          disabled={submitting}
+          aria-busy={submitting}
+        >
           {submitting ? 'Saving…' : submitLabel}
         </button>
-        <button type="button" className="btn btn-danger" onClick={onCancel}>
+        <button
+          type="button"
+          className="btn btn-outline lf-actions__cancel"
+          onClick={onCancel}
+        >
           Cancel
         </button>
       </div>
