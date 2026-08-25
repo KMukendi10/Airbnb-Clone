@@ -1,40 +1,109 @@
-.reservations-page {
-  padding: 32px 24px 60px;
+/* ============================================================
+   Admin – Reservations Page
+   ============================================================ */
+
+.reservations-admin-page {
+  padding: 36px 24px 72px;
 }
 
-.reservations-page h1 {
-  font-size: 22px;
-  margin-bottom: 24px;
+.res-admin-header {
+  margin-bottom: 28px;
+}
+
+.res-admin-title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  margin: 0 0 4px;
+}
+
+.res-admin-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.res-admin-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+}
+
+.res-admin-error {
+  color: var(--color-danger);
+}
+
+.res-admin-empty {
+  padding: 40px 0;
+}
+
+.res-admin-empty__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  margin: 0 0 8px;
+}
+
+.res-admin-empty__subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.admin-res-table-wrap {
+  overflow-x: auto;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
 }
 
 .admin-res-table {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-  font-size: 14px;
+  font-size: var(--font-size-base);
+  white-space: nowrap;
 }
 
 .admin-res-table th {
   text-align: left;
-  padding: 14px 16px;
+  padding: 12px 16px;
   background: var(--color-bg-alt);
-  font-size: 12px;
+  font-size: var(--font-size-xs);
+  font-weight: 700;
   text-transform: uppercase;
+  letter-spacing: 0.6px;
   color: var(--color-text-muted);
+  border-bottom: 1px solid var(--color-border);
 }
 
 .admin-res-table td {
   padding: 14px 16px;
   border-top: 1px solid var(--color-border);
+  color: var(--color-text);
 }
 
-@media (max-width: 640px) {
-  .admin-res-table {
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
-  }
+.admin-res-table tbody tr:hover {
+  background: var(--color-bg-alt);
+}
+
+.res-guest {
+  font-weight: 600;
+}
+
+.res-property {
+  font-weight: 600;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Spinner reuse ── */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 3px solid var(--color-border);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
 }
