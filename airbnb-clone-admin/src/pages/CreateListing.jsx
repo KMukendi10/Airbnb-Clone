@@ -16,7 +16,9 @@ export default function CreateListing() {
   return (
     <>
       <Header />
-      <ListingForm submitLabel="Save" onSubmit={handleCreate} onCancel={() => navigate('/')} />
+      <div className="container listing-form-page">
+        <ListingForm submitLabel="Save" onSubmit={handleCreate} onCancel={() => navigate('/')} />
+      </div>
     </>
   );
 }

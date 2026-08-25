@@ -30,9 +30,11 @@ export default function UpdateListing() {
     return (
       <>
         <Header />
-        <p className="listings-status" style={{ textAlign: 'center', marginTop: 40 }}>
-          Loading listing…
-        </p>
+        <div className="container listing-form-page">
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '80px 0', color: 'var(--color-text-muted)' }}>
+            Loading listing…
+          </div>
+        </div>
       </>
     );
   }
@@ -41,9 +43,11 @@ export default function UpdateListing() {
     return (
       <>
         <Header />
-        <p className="listings-status listings-error" style={{ textAlign: 'center', marginTop: 40 }}>
-          {error || 'Listing not found.'}
-        </p>
+        <div className="container listing-form-page">
+          <div style={{ color: 'var(--color-danger)', padding: '80px 0', textAlign: 'center' }}>
+            {error || 'Listing not found.'}
+          </div>
+        </div>
       </>
     );
   }
@@ -51,12 +55,14 @@ export default function UpdateListing() {
   return (
     <>
       <Header />
-      <ListingForm
-        initialValues={listing}
-        submitLabel="Update"
-        onSubmit={handleUpdate}
-        onCancel={() => navigate('/')}
-      />
+      <div className="container listing-form-page">
+        <ListingForm
+          initialValues={listing}
+          submitLabel="Update"
+          onSubmit={handleUpdate}
+          onCancel={() => navigate('/')}
+        />
+      </div>
     </>
   );
 }
