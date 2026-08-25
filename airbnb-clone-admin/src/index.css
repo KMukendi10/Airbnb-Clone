@@ -1,19 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
 :root {
+  /* Brand */
   --color-primary: #3457d1;
   --color-primary-dark: #253d9e;
   --color-danger: #e0193f;
+  --color-danger-dark: #b71c1c;
+
+  /* Text */
   --color-text: #222222;
   --color-text-muted: #6a6a6a;
-  --color-border: #dddddd;
+  --color-text-light: #b0b0b0;
+
+  /* Surfaces */
   --color-bg: #ffffff;
-  --color-bg-alt: #f7f7f7;
+  --color-bg-alt: #f4f6fa;
+
+  /* Borders */
+  --color-border: #e0e0e0;
+  --color-border-dark: #bdbdbd;
+
+  /* Radius */
+  --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shadows */
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.08);
   --shadow-elevated: 0 6px 20px rgba(0, 0, 0, 0.12);
-  --max-width: 1000px;
+
+  /* Layout */
+  --max-width: 1080px;
+  --header-height: 68px;
+
+  /* Typography */
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-size-xs: 11px;
+  --font-size-sm: 13px;
+  --font-size-base: 14px;
+  --font-size-md: 16px;
+  --font-size-lg: 18px;
+  --font-size-xl: 22px;
+  --font-size-2xl: 28px;
 }
 
 * {
