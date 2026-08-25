@@ -1,29 +1,137 @@
+/* ============================================================
+   Location (search results) page
+   ============================================================ */
+
 .location-page {
-  padding: 32px 24px 60px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-.location-page h1 {
-  font-size: 22px;
-  margin-bottom: 24px;
+.location-main {
+  flex: 1;
+  padding-top: 32px;
+  padding-bottom: 64px;
 }
 
-.location-status {
+/* ── Filter chips ── */
+.filter-chips {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 12px;
+  scrollbar-width: none;
+  margin-bottom: 28px;
+}
+
+.filter-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.filter-chip {
+  background: none;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  font-family: inherit;
+  color: var(--color-text);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast), border-color var(--transition-fast);
+  flex-shrink: 0;
+}
+
+.filter-chip:hover {
+  border-color: var(--color-text);
+  background: var(--color-bg-alt);
+}
+
+.filter-chip--active {
+  background: var(--color-text);
+  border-color: var(--color-text);
+  color: #fff;
+}
+
+/* ── Heading ── */
+.location-heading {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+.location-heading__count {
+  color: var(--color-text);
+}
+
+.location-heading__place {
+  color: var(--color-text);
+}
+
+.location-subheading {
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  font-size: 14px;
+  margin-bottom: 28px;
 }
 
-.location-error {
-  color: var(--color-primary);
+/* ── Status panels ── */
+.location-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 80px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
 }
 
-.location-grid {
+.location-status--error {
+  color: #c62828;
+}
+
+.location-status--empty {
+  color: var(--color-text);
+}
+
+.location-empty__title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.location-empty__subtitle {
+  font-size: var(--font-size-base);
+  color: var(--color-text-muted);
+  max-width: 380px;
+}
+
+/* ── Listings grid ── */
+.listings-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  margin-top: 16px;
 }
 
-@media (max-width: 720px) {
-  .location-grid {
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .listings-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 860px) {
+  .listings-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (max-width: 500px) {
+  .listings-grid {
     grid-template-columns: 1fr;
   }
 }
