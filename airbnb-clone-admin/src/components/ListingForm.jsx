@@ -98,7 +98,16 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
 
   return (
     <form className="listing-form" onSubmit={handleSubmit} noValidate>
-      <h1>{submitLabel === 'Save' ? 'Create Listing' : 'Update Listing'}</h1>
+      <div>
+        <h1 className="listing-form__title">
+          {submitLabel === 'Save' ? 'Create a New Listing' : 'Update Listing'}
+        </h1>
+        <p className="listing-form__subtitle">
+          {submitLabel === 'Save'
+            ? 'Fill in the details to publish your property.'
+            : 'Edit the details below and save your changes.'}
+        </p>
+      </div>
 
       <div className="form-row">
         <label>
