@@ -63,7 +63,7 @@ export default function Reservations() {
                   <td>{r.accommodation?.title || 'Listing removed'}</td>
                   <td>{new Date(r.checkIn).toLocaleDateString()}</td>
                   <td>{new Date(r.checkOut).toLocaleDateString()}</td>
-                  <td>R{r.totalPrice}</td>
+                  <td>R{r.totalCost ?? r.totalPrice ?? '—'}</td>
                   <td>
                     <button className="btn-cancel" onClick={() => handleCancel(r._id)}>
                       Cancel
