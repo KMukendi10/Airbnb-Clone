@@ -1,0 +1,86 @@
+/* ============================================================
+   FormPage – shared wrapper styles for CreateListing and UpdateListing
+   ============================================================ */
+
+.form-page-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg-page);
+}
+
+.form-page-main {
+  flex: 1;
+  padding-bottom: 80px;
+}
+
+/* ── Breadcrumb bar ── */
+.form-page-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 24px;
+  padding-bottom: 4px;
+}
+
+.form-page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  font-family: inherit;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast), color var(--transition-fast);
+}
+
+.form-page-back:hover {
+  background: var(--color-bg-alt);
+  color: var(--color-text);
+}
+
+.form-page-back svg {
+  width: 16px;
+  height: 16px;
+}
+
+.form-page-breadcrumb-sep {
+  color: var(--color-text-light);
+  font-size: var(--font-size-sm);
+}
+
+.form-page-breadcrumb-current {
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 320px;
+}
+
+/* ── Form container ── */
+.form-page-container {
+  padding-top: 20px;
+}
+
+/* ── Status panels ── */
+.form-page-status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 100px 24px;
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+}
+
+.form-page-status--error {
+  color: var(--color-danger);
+}
