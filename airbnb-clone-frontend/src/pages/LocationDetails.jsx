@@ -67,11 +67,10 @@ export default function LocationDetails() {
     try {
       await api.createReservation(
         {
-          accommodation: listing._id,
+          accommodationId: listing._id,
           checkIn,
           checkOut,
           guests,
-          totalPrice: costBreakdown.total,
         },
         token
       );
