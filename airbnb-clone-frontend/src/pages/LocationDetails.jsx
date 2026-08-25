@@ -1,3 +1,11 @@
+/**
+ * LocationDetails page – single listing view with:
+ *  - Heading, subheading (rating, reviews, location)
+ *  - 5-photo gallery (1 large + 4 thumbnails in 2×2 grid)
+ *  - Left column: listing info, amenities, things to know
+ *  - Right sticky sidebar: price calculator with full breakdown
+ */
+
 import { useEffect, useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Header from '../components/Header';
@@ -6,12 +14,44 @@ import { useAuth } from '../context/AuthContext';
 import { api } from '../api/client';
 import './LocationDetails.css';
 
+// ── Amenity icons (simple emoji fallback map) ──────────────
+const AMENITY_ICONS = {
+  wifi: '📶',
+  pool: '🏊',
+  kitchen: '🍳',
+  parking: '🅿️',
+  gym: '🏋️',
+  tv: '📺',
+  washer: '🧺',
+  dryer: '🌬️',
+  heating: '🔥',
+  'air conditioning': '❄️',
+  default: '✓',
+};
+
+function amenityIcon(name = '') {
+  const key = name.toLowerCase();
+  for (const [k, v] of Object.entries(AMENITY_ICONS)) {
+    if (key.includes(k)) return v;
+  }
+  return AMENITY_ICONS.default;
+}
+
+/** Calculate nights between two ISO date strings */
 function nightsBetween(checkIn, checkOut) {
   if (!checkIn || !checkOut) return 0;
   const ms = new Date(checkOut) - new Date(checkIn);
   const nights = Math.round(ms / (1000 * 60 * 60 * 24));
   return nights > 0 ? nights : 0;
 }
+
+/** Format number as currency string */
+function fmt(n) {
+  return Number(n || 0).toLocaleString('en-ZA');
+}
+
+// ── Placeholder image ──────────────────────────────────────
+const PLACEHOLDER = 'https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80';
 
 export default function LocationDetails() {
   const { id } = useParams();
@@ -22,13 +62,17 @@ export default function LocationDetails() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  // Reservation form state
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const [guests, setGuests] = useState(1);
   const [reserving, setReserving] = useState(false);
   const [reserveMessage, setReserveMessage] = useState('');
+  const [reserveSuccess, setReserveSuccess] = useState(false);
 
+  // Fetch listing on mount
   useEffect(() => {
+    setLoading(true);
     api
       .getAccommodation(id)
       .then(setListing)
@@ -36,30 +80,44 @@ export default function LocationDetails() {
       .finally(() => setLoading(false));
   }, [id]);
 
-  // dynamic cost breakdown - recalculates any time dates or the listing change
+  // Today's date string for min date on inputs
+  const today = new Date().toISOString().split('T')[0];
+
+  // Dynamic cost breakdown
   const costBreakdown = useMemo(() => {
     if (!listing) return null;
     const nights = nightsBetween(checkIn, checkOut);
-    const subtotal = nights * listing.price;
+    const subtotal = nights * (listing.price || 0);
     const weeklyDiscountAmount =
       nights >= 7 ? Math.round((subtotal * (listing.weeklyDiscount || 0)) / 100) : 0;
     const cleaningFee = listing.cleaningFee || 0;
     const serviceFee = listing.serviceFee || 0;
     const occupancyTaxes = listing.occupancyTaxes || 0;
-    const total = subtotal - weeklyDiscountAmount + cleaningFee + serviceFee + occupancyTaxes;
+    const total =
+      subtotal - weeklyDiscountAmount + cleaningFee + serviceFee + occupancyTaxes;
 
-    return { nights, subtotal, weeklyDiscountAmount, cleaningFee, serviceFee, occupancyTaxes, total };
+    return {
+      nights,
+      subtotal,
+      weeklyDiscountAmount,
+      cleaningFee,
+      serviceFee,
+      occupancyTaxes,
+      total,
+    };
   }, [listing, checkIn, checkOut]);
 
+  // Reserve handler
   async function handleReserve() {
     setReserveMessage('');
+    setReserveSuccess(false);
 
     if (!user) {
       navigate('/login');
       return;
     }
     if (!checkIn || !checkOut || costBreakdown.nights <= 0) {
-      setReserveMessage('Pick valid check-in and check-out dates first.');
+      setReserveMessage('Please pick valid check-in and check-out dates first.');
       return;
     }
 
@@ -74,7 +132,10 @@ export default function LocationDetails() {
         },
         token
       );
-      setReserveMessage('Reservation confirmed! Check "View reservations" in your profile menu.');
+      setReserveSuccess(true);
+      setReserveMessage(
+        'Reservation confirmed! View it in your profile → "View reservations".'
+      );
     } catch (err) {
       setReserveMessage(err.message);
     } finally {
@@ -82,11 +143,15 @@ export default function LocationDetails() {
     }
   }
 
+  // ── Loading & Error states ──
   if (loading) {
     return (
       <>
         <Header />
-        <div className="container details-status">Loading listing…</div>
+        <div className="details-status container" aria-live="polite">
+          <div className="spinner" aria-hidden="true" />
+          <p>Loading listing…</p>
+        </div>
         <Footer />
       </>
     );
@@ -96,102 +161,276 @@ export default function LocationDetails() {
     return (
       <>
         <Header />
-        <div className="container details-status details-error">{error || 'Listing not found.'}</div>
+        <div className="details-status details-status--error container" role="alert">
+          <p>{error || 'Listing not found.'}</p>
+          <button className="btn btn-outline" onClick={() => navigate(-1)}>
+            ← Go back
+          </button>
+        </div>
         <Footer />
       </>
     );
   }
 
-  const [mainImage, ...smallImages] = listing.images?.length
-    ? listing.images
-    : ['https://placehold.co/800x500?text=Listing'];
+  // Build gallery images
+  const images = listing.images?.length ? listing.images : [PLACEHOLDER];
+  const [mainImage, ...restImages] = images;
 
   return (
     <>
       <Header />
 
-      <div className="container details-page">
-        <div className="details-heading">
-          <h1>
-            {listing.type} in {listing.location}
-          </h1>
-          <p className="details-subheading">
-            {listing.rating > 0 && <span>★ {listing.rating.toFixed(1)}</span>}
-            {listing.reviews > 0 && <span> · {listing.reviews} reviews</span>}
-            <span> · {listing.location}</span>
-          </p>
-        </div>
+      <article className="details-page container">
 
-        <div className="details-gallery">
-          <img src={mainImage} alt={listing.title} className="gallery-main" />
-          <div className="gallery-small">
+        {/* ════ Heading ════ */}
+        <header className="details-heading">
+          <h1 className="details-title">{listing.title}</h1>
+          <div className="details-meta-row">
+            {listing.rating > 0 && (
+              <span className="details-meta-item details-rating">
+                ★ {listing.rating.toFixed(1)}
+              </span>
+            )}
+            {listing.reviews > 0 && (
+              <span className="details-meta-item">
+                <a href="#reviews" className="details-underline-link">
+                  {listing.reviews} review{listing.reviews !== 1 ? 's' : ''}
+                </a>
+              </span>
+            )}
+            <span className="details-meta-dot" aria-hidden="true">·</span>
+            <span className="details-meta-item details-location-link">
+              <a href="#map" className="details-underline-link">{listing.location}</a>
+            </span>
+          </div>
+        </header>
+
+        {/* ════ Gallery ════ */}
+        <div className="details-gallery" aria-label="Property photos">
+          <img
+            src={mainImage}
+            alt={listing.title}
+            className="gallery-main"
+          />
+          <div className="gallery-grid">
             {[0, 1, 2, 3].map((i) => (
               <img
                 key={i}
-                src={smallImages[i] || mainImage}
-                alt={`${listing.title} ${i + 2}`}
+                src={restImages[i] || mainImage}
+                alt={`${listing.title} – photo ${i + 2}`}
                 className="gallery-thumb"
+                loading="lazy"
               />
             ))}
           </div>
         </div>
 
-        <div className="details-columns">
+        {/* ════ Two-column body ════ */}
+        <div className="details-body">
+
+          {/* ── Left column ── */}
           <div className="details-main">
-            <h2>{listing.title}</h2>
-            <p className="details-meta">
-              {listing.guests} guests · {listing.bedrooms} bedrooms · {listing.bathrooms} bathrooms
-            </p>
 
-            <p className="details-description">{listing.description}</p>
-
-            <hr />
-
-            <h3>What this place offers</h3>
-            <ul className="amenities-list">
-              {(listing.amenities?.length ? listing.amenities : ['No amenities listed']).map((a) => (
-                <li key={a}>✓ {a}</li>
-              ))}
-            </ul>
-
-            <hr />
-
-            <h3>Things to know</h3>
-            <div className="policy-grid">
+            {/* Type + host intro */}
+            <div className="details-host-row">
               <div>
-                <h4>House Rules</h4>
-                <p>Check-in after 3:00pm · Checkout before 11:00am · No smoking</p>
+                <h2 className="details-host-title">
+                  {listing.type} hosted by{' '}
+                  {listing.host?.username ?? 'a Superhost'}
+                </h2>
+                <p className="details-host-meta">
+                  {listing.guests} guest{listing.guests !== 1 ? 's' : ''} &middot;{' '}
+                  {listing.bedrooms} bedroom{listing.bedrooms !== 1 ? 's' : ''} &middot;{' '}
+                  {listing.bathrooms} bathroom{listing.bathrooms !== 1 ? 's' : ''}
+                </p>
               </div>
-              <div>
-                <h4>Health &amp; Safety</h4>
-                <p>Enhanced cleaning{listing.enhancedCleaning ? ' applied' : ' available on request'}</p>
-              </div>
-              <div>
-                <h4>Cancellation Policy</h4>
-                <p>Free cancellation for 48 hours after booking</p>
+              <div className="details-host-avatar" aria-hidden="true">
+                {(listing.host?.username?.[0] ?? 'H').toUpperCase()}
               </div>
             </div>
+
+            <hr className="details-divider" />
+
+            {/* Self check-in badge */}
+            {listing.selfCheckIn && (
+              <div className="details-highlight">
+                <span className="details-highlight__icon" aria-hidden="true">🔑</span>
+                <div>
+                  <p className="details-highlight__title">Self check-in</p>
+                  <p className="details-highlight__desc">Check yourself in with the keypad.</p>
+                </div>
+              </div>
+            )}
+
+            {/* Enhanced cleaning badge */}
+            {listing.enhancedCleaning && (
+              <div className="details-highlight">
+                <span className="details-highlight__icon" aria-hidden="true">✨</span>
+                <div>
+                  <p className="details-highlight__title">Enhanced cleaning</p>
+                  <p className="details-highlight__desc">This host follows Airbnb's 5-step enhanced cleaning process.</p>
+                </div>
+              </div>
+            )}
+
+            <hr className="details-divider" />
+
+            {/* Description */}
+            <section aria-label="About this place">
+              <p className="details-description">{listing.description}</p>
+            </section>
+
+            <hr className="details-divider" />
+
+            {/* Amenities */}
+            <section aria-label="Amenities">
+              <h3 className="details-section-title">What this place offers</h3>
+              {listing.amenities?.length ? (
+                <ul className="amenities-grid">
+                  {listing.amenities.map((a) => (
+                    <li key={a} className="amenity-item">
+                      <span className="amenity-icon" aria-hidden="true">{amenityIcon(a)}</span>
+                      {a}
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="details-empty-text">No amenities listed.</p>
+              )}
+            </section>
+
+            <hr className="details-divider" />
+
+            {/* Reviews summary */}
+            {listing.rating > 0 && (
+              <section id="reviews" aria-label="Ratings">
+                <h3 className="details-section-title">
+                  ★ {listing.rating.toFixed(1)} &middot; {listing.reviews} review{listing.reviews !== 1 ? 's' : ''}
+                </h3>
+                {listing.specificRatings && (
+                  <div className="ratings-grid">
+                    {[
+                      ['Cleanliness', listing.specificRatings.cleanliness],
+                      ['Communication', listing.specificRatings.communication],
+                      ['Check-in', listing.specificRatings.checkIn],
+                      ['Accuracy', listing.specificRatings.accuracy],
+                      ['Location', listing.specificRatings.location],
+                      ['Value', listing.specificRatings.value],
+                    ].map(([label, val]) => (
+                      <div key={label} className="rating-row">
+                        <span className="rating-label">{label}</span>
+                        <div className="rating-bar-wrap">
+                          <div
+                            className="rating-bar"
+                            style={{ width: `${((val || 0) / 5) * 100}%` }}
+                            role="meter"
+                            aria-valuenow={val}
+                            aria-valuemin={0}
+                            aria-valuemax={5}
+                            aria-label={`${label}: ${val ?? 0} out of 5`}
+                          />
+                        </div>
+                        <span className="rating-val">{val?.toFixed(1) ?? '—'}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            <hr className="details-divider" />
+
+            {/* Things to know */}
+            <section aria-label="Things to know">
+              <h3 className="details-section-title">Things to know</h3>
+              <div className="know-grid">
+                <div className="know-col">
+                  <h4 className="know-col__title">House rules</h4>
+                  <ul className="know-col__list">
+                    <li>Check-in: after 3:00 PM</li>
+                    <li>Checkout: before 11:00 AM</li>
+                    <li>No smoking</li>
+                    <li>No parties or events</li>
+                  </ul>
+                </div>
+                <div className="know-col">
+                  <h4 className="know-col__title">Health &amp; safety</h4>
+                  <ul className="know-col__list">
+                    <li>
+                      {listing.enhancedCleaning
+                        ? 'Enhanced cleaning process applied'
+                        : 'Standard cleaning process'}
+                    </li>
+                    <li>Carbon monoxide alarm</li>
+                    <li>Smoke alarm</li>
+                  </ul>
+                </div>
+                <div className="know-col">
+                  <h4 className="know-col__title">Cancellation policy</h4>
+                  <ul className="know-col__list">
+                    <li>Free cancellation for 48 hours</li>
+                    <li>Review the full policy before booking</li>
+                  </ul>
+                </div>
+              </div>
+            </section>
           </div>
 
-          <aside className="cost-calculator">
-            <p className="calc-price">
-              <strong>R{listing.price}</strong> / night
-            </p>
+          {/* ── Right sidebar (sticky calculator) ── */}
+          <aside className="cost-calculator" aria-label="Booking calculator">
+            <div className="calc-header">
+              <p className="calc-price">
+                <strong>R{fmt(listing.price)}</strong>
+                <span className="calc-per-night"> / night</span>
+              </p>
+              {listing.rating > 0 && (
+                <p className="calc-rating">
+                  ★ {listing.rating.toFixed(1)}{' '}
+                  <span className="calc-rating-count">
+                    ({listing.reviews} review{listing.reviews !== 1 ? 's' : ''})
+                  </span>
+                </p>
+              )}
+            </div>
 
-            <div className="calc-dates">
-              <label>
-                Check-in
-                <input type="date" value={checkIn} onChange={(e) => setCheckIn(e.target.value)} />
+            {/* Date range */}
+            <div className="calc-date-row">
+              <label className="calc-date-label">
+                <span>CHECK-IN</span>
+                <input
+                  type="date"
+                  className="calc-date-input"
+                  value={checkIn}
+                  min={today}
+                  onChange={(e) => {
+                    setCheckIn(e.target.value);
+                    if (checkOut && e.target.value >= checkOut) setCheckOut('');
+                  }}
+                  aria-label="Check-in date"
+                />
               </label>
-              <label>
-                Check-out
-                <input type="date" value={checkOut} onChange={(e) => setCheckOut(e.target.value)} />
+              <label className="calc-date-label">
+                <span>CHECKOUT</span>
+                <input
+                  type="date"
+                  className="calc-date-input"
+                  value={checkOut}
+                  min={checkIn || today}
+                  onChange={(e) => setCheckOut(e.target.value)}
+                  aria-label="Checkout date"
+                />
               </label>
             </div>
 
-            <label className="calc-guests">
-              Guests
-              <select value={guests} onChange={(e) => setGuests(Number(e.target.value))}>
+            {/* Guests */}
+            <label className="calc-guests-label">
+              <span className="calc-guests-title">GUESTS</span>
+              <select
+                className="calc-guests-select"
+                value={guests}
+                onChange={(e) => setGuests(Number(e.target.value))}
+                aria-label="Number of guests"
+              >
                 {Array.from({ length: listing.guests || 1 }, (_, i) => i + 1).map((n) => (
                   <option key={n} value={n}>
                     {n} guest{n > 1 ? 's' : ''}
@@ -200,47 +439,72 @@ export default function LocationDetails() {
               </select>
             </label>
 
-            <button className="btn btn-primary calc-reserve" onClick={handleReserve} disabled={reserving}>
+            {/* Reserve button */}
+            <button
+              className="btn btn-primary calc-reserve-btn"
+              onClick={handleReserve}
+              disabled={reserving}
+              aria-busy={reserving}
+            >
               {reserving ? 'Reserving…' : 'Reserve'}
             </button>
 
-            {reserveMessage && <p className="calc-message">{reserveMessage}</p>}
+            {/* Feedback message */}
+            {reserveMessage && (
+              <p
+                className={`calc-message${reserveSuccess ? ' calc-message--success' : ' calc-message--error'}`}
+                role="status"
+              >
+                {reserveMessage}
+              </p>
+            )}
 
-            {costBreakdown.nights > 0 && (
-              <div className="calc-breakdown">
-                <div>
+            <p className="calc-no-charge">You won&apos;t be charged yet</p>
+
+            {/* Cost breakdown (only when dates are selected) */}
+            {costBreakdown && costBreakdown.nights > 0 && (
+              <div className="calc-breakdown" aria-label="Cost breakdown">
+                <div className="calc-line">
                   <span>
-                    R{listing.price} × {costBreakdown.nights} night{costBreakdown.nights > 1 ? 's' : ''}
+                    R{fmt(listing.price)} × {costBreakdown.nights} night
+                    {costBreakdown.nights > 1 ? 's' : ''}
                   </span>
-                  <span>R{costBreakdown.subtotal}</span>
+                  <span>R{fmt(costBreakdown.subtotal)}</span>
                 </div>
+
                 {costBreakdown.weeklyDiscountAmount > 0 && (
-                  <div>
+                  <div className="calc-line calc-line--discount">
                     <span>Weekly discount</span>
-                    <span>-R{costBreakdown.weeklyDiscountAmount}</span>
+                    <span>−R{fmt(costBreakdown.weeklyDiscountAmount)}</span>
                   </div>
                 )}
-                <div>
+
+                <div className="calc-line">
                   <span>Cleaning fee</span>
-                  <span>R{costBreakdown.cleaningFee}</span>
+                  <span>R{fmt(costBreakdown.cleaningFee)}</span>
                 </div>
-                <div>
+
+                <div className="calc-line">
                   <span>Service fee</span>
-                  <span>R{costBreakdown.serviceFee}</span>
+                  <span>R{fmt(costBreakdown.serviceFee)}</span>
                 </div>
-                <div>
-                  <span>Occupancy taxes and fees</span>
-                  <span>R{costBreakdown.occupancyTaxes}</span>
+
+                <div className="calc-line">
+                  <span>Occupancy taxes &amp; fees</span>
+                  <span>R{fmt(costBreakdown.occupancyTaxes)}</span>
                 </div>
-                <div className="calc-total">
+
+                <hr className="calc-divider" />
+
+                <div className="calc-line calc-line--total">
                   <span>Total</span>
-                  <span>R{costBreakdown.total}</span>
+                  <span>R{fmt(costBreakdown.total)}</span>
                 </div>
               </div>
             )}
           </aside>
         </div>
-      </div>
+      </article>
 
       <Footer />
     </>
