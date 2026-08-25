@@ -33,41 +33,51 @@ export default function Login() {
 
   return (
     <div className="admin-login-page">
-      <form className="admin-login-card" onSubmit={handleSubmit}>
-        <div className="admin-login-logo">airbnb</div>
-        <h1>Login</h1>
+      <form className="admin-login-card" onSubmit={handleSubmit} noValidate>
+        <div className="admin-login-header">
+          <div className="admin-login-logo">airbnb</div>
+          <h1>Admin Login</h1>
+          <p>Sign in to manage your listings</p>
+        </div>
 
-        <label>
-          Username
-          <input
-            type="text"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoComplete="username"
-          />
-        </label>
+        <div className="admin-login-body">
+          {error && <p className="admin-login-error" role="alert">{error}</p>}
 
-        <label>
-          Password
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
-        </label>
+          <label>
+            Username
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              autoComplete="username"
+              autoFocus
+              placeholder="Enter your username"
+            />
+          </label>
 
-        <a href="#forgot" className="admin-login-forgot">
-          Forgot password?
-        </a>
+          <label>
+            Password
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+              placeholder="Enter your password"
+            />
+          </label>
 
-        {error && <p className="admin-login-error">{error}</p>}
+          <a href="#forgot" className="admin-login-forgot">
+            Forgot password?
+          </a>
 
-        <button className="btn btn-primary admin-login-submit" type="submit" disabled={submitting}>
-          {submitting ? 'Logging in…' : 'Login'}
-        </button>
+          <button className="btn btn-primary admin-login-submit" type="submit" disabled={submitting}>
+            {submitting ? 'Logging in…' : 'Log in'}
+          </button>
 
-        <p className="admin-login-hint">Seeded host account: Jane Doe / password321</p>
+          <p className="admin-login-hint">
+            💡 Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
+          </p>
+        </div>
       </form>
     </div>
   );
