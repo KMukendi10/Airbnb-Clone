@@ -1,3 +1,9 @@
+/**
+ * App.jsx – Root component.
+ * Wraps the whole app in AuthProvider (JWT context) and sets up
+ * client-side routing with React Router v6.
+ */
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Home from './pages/Home';
@@ -11,11 +17,17 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Public routes */}
           <Route path="/" element={<Home />} />
           <Route path="/locations" element={<Location />} />
           <Route path="/locations/:id" element={<LocationDetails />} />
           <Route path="/login" element={<Login />} />
+
+          {/* Protected – Reservations redirects internally if unauthenticated */}
           <Route path="/reservations" element={<Reservations />} />
+
+          {/* Catch-all: redirect unknown paths to home */}
+          <Route path="*" element={<Home />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
