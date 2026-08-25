@@ -1,33 +1,98 @@
-.hero {
-  height: 420px;
-  background: linear-gradient(0deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.1)),
-    url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1600&q=60')
-      center/cover;
+/* ============================================================
+   Home Page Styles – Airbnb Clone
+   ============================================================ */
+
+.home-page {
+  min-height: 100vh;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+}
+
+/* ── Section helpers ── */
+.section {
+  padding: 48px 0;
+}
+
+.section-title {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 24px;
+}
+
+/* ════════════════════════════════════════
+   1. Hero
+════════════════════════════════════════ */
+.hero {
+  position: relative;
+  height: calc(100vh - 80px);
+  min-height: 480px;
+  max-height: 900px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
   justify-content: center;
 }
 
+.hero-bg {
+  position: absolute;
+  inset: 0;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 30%;
+}
+
 .hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.05) 0%,
+    rgba(0, 0, 0, 0.0) 30%,
+    rgba(0, 0, 0, 0.35) 80%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
   text-align: center;
+  padding: 0 24px 64px;
+}
+
+.hero-tagline {
   color: #fff;
-}
-
-.hero-overlay h1 {
-  font-size: 32px;
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
   margin-bottom: 20px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
 }
 
-.home-section {
-  padding: 40px 24px;
+.hero-flexible-btn {
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-text);
+  font-weight: 700;
+  font-size: var(--font-size-md);
+  padding: 14px 28px;
+  border-radius: var(--radius-full);
+  border: none;
+  box-shadow: var(--shadow-elevated);
+  transition: background var(--transition-base), transform var(--transition-base);
 }
 
-.home-section h2 {
-  font-size: 22px;
-  margin-bottom: 20px;
+.hero-flexible-btn:hover {
+  background: #fff;
+  transform: scale(1.03);
 }
 
+/* ════════════════════════════════════════
+   2. Inspiration Grid
+════════════════════════════════════════ */
 .inspiration-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -35,190 +100,392 @@
 }
 
 .inspiration-card {
-  border: none;
-  border-radius: var(--radius-md);
-  height: 180px;
-  padding: 16px;
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  color: #fff;
-  text-align: left;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  padding: 8px;
+  transition: background var(--transition-fast);
 }
 
-.inspiration-name {
-  font-weight: 700;
-  font-size: 15px;
+.inspiration-card:hover {
+  background: var(--color-bg-alt);
 }
 
-.inspiration-sub {
-  font-size: 13px;
-  opacity: 0.85;
+.inspiration-card__img-wrap {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.experience-grid {
+.inspiration-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.inspiration-card:hover .inspiration-card__img {
+  transform: scale(1.06);
+}
+
+.inspiration-card__body {
+  min-width: 0;
+}
+
+.inspiration-card__city {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.inspiration-card__time {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ════════════════════════════════════════
+   3. Experiences
+════════════════════════════════════════ */
+.experiences-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
+  gap: 20px;
 }
 
 .experience-card {
-  height: 240px;
-  border-radius: var(--radius-md);
-  padding: 24px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: flex-start;
-  gap: 12px;
+  position: relative;
+  height: 380px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
   background-size: cover;
   background-position: center;
+  cursor: pointer;
+  transition: transform var(--transition-base);
 }
 
-.experience-card--canyon {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.05)),
-    url('https://images.unsplash.com/photo-1509316785289-025f5b846b35?auto=format&fit=crop&w=1000&q=60');
-}
-
-.experience-card--kitchen {
-  background-image: linear-gradient(0deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.05)),
-    url('https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=1000&q=60');
-}
-
-.experience-title {
-  color: #fff;
-  font-size: 22px;
-  font-weight: 700;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
-
-.experience-btn {
-  background: #fff;
-}
-
-.shop-section {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 32px;
-  flex-wrap: wrap;
-}
-
-.shop-copy h2 {
-  margin-bottom: 16px;
-}
-
-.shop-cards {
-  display: flex;
-  position: relative;
-  width: 220px;
-  height: 130px;
-}
-
-.gift-card {
+.experience-card::after {
+  content: '';
   position: absolute;
-  width: 150px;
-  height: 95px;
-  border-radius: var(--radius-sm);
-  box-shadow: var(--shadow-elevated);
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 50%);
+  pointer-events: none;
 }
 
-.gift-card--1 {
-  background: linear-gradient(135deg, #6dd5ed, #2193b0);
-  top: 10px;
+.experience-card:hover {
+  transform: scale(1.01);
+}
+
+.experience-card__body {
+  position: absolute;
+  bottom: 0;
   left: 0;
-  transform: rotate(-8deg);
+  right: 0;
+  z-index: 1;
+  padding: 28px;
 }
 
-.gift-card--2 {
-  background: var(--color-primary);
-  top: 20px;
-  left: 40px;
-  transform: rotate(4deg);
-}
-
-.gift-card--3 {
-  background: linear-gradient(135deg, #ff9966, #9c1655);
-  top: 0;
-  left: 75px;
-  transform: rotate(12deg);
-}
-
-.getaway-tabs {
-  display: flex;
-  gap: 8px;
+.experience-card__title {
+  font-size: var(--font-size-xl);
+  font-weight: 800;
+  color: #fff;
   margin-bottom: 16px;
-  border-bottom: 1px solid var(--color-border);
 }
 
-.getaway-tab {
-  background: none;
-  border: none;
-  padding: 10px 4px;
-  margin-right: 20px;
-  font-size: 14px;
-  color: var(--color-text-muted);
-  border-bottom: 2px solid transparent;
-}
-
-.getaway-tab.active {
+.experience-card__btn {
+  background: #fff;
   color: var(--color-text);
   font-weight: 700;
-  border-color: var(--color-text);
+  font-size: var(--font-size-base);
+  padding: 12px 22px;
+  border-radius: var(--radius-sm);
+  transition: background var(--transition-fast);
 }
 
-.getaway-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+.experience-card__btn:hover {
+  background: #f0f0f0;
+}
+
+/* ════════════════════════════════════════
+   4. Shop Gift Cards
+════════════════════════════════════════ */
+.shop-card {
   display: flex;
-  flex-direction: column;
-  gap: 12px;
+  align-items: center;
+  background: linear-gradient(135deg, #ff5a5f 0%, #c13584 100%);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  min-height: 260px;
 }
 
-.getaway-list li {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  padding: 12px 0;
-  border-bottom: 1px solid var(--color-border);
+.shop-card__text {
+  flex: 1;
+  padding: 48px;
 }
 
-.hosting-banner {
-  background: #222;
-  margin-top: 40px;
-}
-
-.hosting-banner-inner {
-  padding: 60px 24px;
+.shop-card__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
   color: #fff;
+  margin-bottom: 12px;
 }
 
-.hosting-banner-inner h2 {
-  font-size: 26px;
-  margin-bottom: 20px;
+.shop-card__description {
+  font-size: var(--font-size-md);
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 28px;
+  max-width: 380px;
 }
 
-.hosting-btn {
-  background: #fff;
-  color: #222;
+.shop-card__btn {
+  background: var(--color-text);
+  color: #fff;
+  font-size: var(--font-size-base);
+  border-radius: var(--radius-sm);
 }
 
-@media (max-width: 800px) {
-  .inspiration-grid,
-  .experience-grid {
+.shop-card__btn:hover {
+  background: #333;
+}
+
+.shop-card__image-wrap {
+  flex: 0 0 45%;
+  height: 260px;
+  overflow: hidden;
+}
+
+.shop-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ════════════════════════════════════════
+   5. Future Getaways
+════════════════════════════════════════ */
+.getaways-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--color-border);
+  margin-bottom: 28px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.getaways-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.getaways-tab {
+  background: none;
+  border: none;
+  padding: 12px 20px;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  white-space: nowrap;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.getaways-tab:hover {
+  color: var(--color-text);
+}
+
+.getaways-tab--active {
+  color: var(--color-text);
+  border-bottom-color: var(--color-text);
+}
+
+.getaways-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.getaway-card {
+  cursor: pointer;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: transform var(--transition-base);
+}
+
+.getaway-card:hover {
+  transform: translateY(-4px);
+}
+
+.getaway-card__img-wrap {
+  height: 180px;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  margin-bottom: 10px;
+}
+
+.getaway-card__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.4s ease;
+}
+
+.getaway-card:hover .getaway-card__img {
+  transform: scale(1.05);
+}
+
+.getaway-card__city {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.getaway-card__country {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.getaway-card__price {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  margin-top: 4px;
+}
+
+/* ════════════════════════════════════════
+   6. Hosting Banner
+════════════════════════════════════════ */
+.hosting-banner {
+  background: var(--color-bg-alt);
+  padding: 0;
+}
+
+.hosting-banner__inner {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  padding-top: 48px;
+  padding-bottom: 48px;
+}
+
+.hosting-banner__text {
+  flex: 1;
+}
+
+.hosting-banner__title {
+  font-size: var(--font-size-2xl);
+  font-weight: 800;
+  color: var(--color-text);
+  margin-bottom: 12px;
+}
+
+.hosting-banner__subtitle {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  margin-bottom: 28px;
+  max-width: 460px;
+}
+
+.hosting-banner__image-wrap {
+  flex: 0 0 42%;
+  height: 300px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+}
+
+.hosting-banner__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ════════════════════════════════════════
+   Responsive
+════════════════════════════════════════ */
+@media (max-width: 1024px) {
+  .inspiration-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .getaways-grid {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 480px) {
-  .inspiration-grid,
-  .experience-grid {
+@media (max-width: 768px) {
+  .hero {
+    height: 70vh;
+  }
+
+  .hero-tagline {
+    font-size: var(--font-size-xl);
+  }
+
+  .experiences-grid {
     grid-template-columns: 1fr;
   }
-  .hero-overlay h1 {
-    font-size: 24px;
-    padding: 0 16px;
+
+  .experience-card {
+    height: 280px;
+  }
+
+  .shop-card {
+    flex-direction: column;
+  }
+
+  .shop-card__image-wrap {
+    flex: none;
+    width: 100%;
+    height: 200px;
+  }
+
+  .hosting-banner__inner {
+    flex-direction: column-reverse;
+    text-align: center;
+  }
+
+  .hosting-banner__image-wrap {
+    flex: none;
+    width: 100%;
+    height: 220px;
+  }
+
+  .hosting-banner__subtitle {
+    max-width: none;
+  }
+}
+
+@media (max-width: 600px) {
+  .inspiration-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .getaways-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-title {
+    font-size: var(--font-size-lg);
+  }
+
+  .shop-card__text {
+    padding: 32px 24px;
+  }
+
+  .shop-card__title {
+    font-size: var(--font-size-xl);
+  }
+}
+
+@media (max-width: 420px) {
+  .getaways-grid {
+    grid-template-columns: 1fr;
   }
 }
