@@ -24,7 +24,7 @@
 /* ── Image (left) ── */
 .loc-card__img-wrap {
   position: relative;
-  flex: 0 0 260px;
+  width: 100%;
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: var(--radius-md);
@@ -160,17 +160,4 @@
 .loc-card__price-night {
   font-weight: 400;
   color: var(--color-text-muted);
-}
-
-/* ── Responsive: stack on narrow screens ── */
-@media (max-width: 640px) {
-  .loc-card {
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .loc-card__img-wrap {
-    flex: none;
-    width: 100%;
-  }
 }
