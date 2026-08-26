@@ -37,6 +37,42 @@ function amenityIcon(name = '') {
   return AMENITY_ICONS.default;
 }
 
+// ── Superhost badge icon (ribbon/medal) ────────────────────
+function SuperhostBadge() {
+  return (
+    <svg viewBox="0 0 32 40" className="superhost-badge__icon" aria-hidden="true">
+      <path d="M16 0 30 6v10c0 8-6 14-14 16C8 30 2 24 2 16V6L16 0z" fill="#E31C5F" />
+      <path d="M16 0 30 6v10c0 8-6 14-14 16V0z" fill="#FF385C" />
+      <path d="M16 6l2.5 5.1 5.6.8-4 3.9.9 5.6L16 18.7l-5 2.7.9-5.6-4-3.9 5.6-.8L16 6z" fill="#FFC107" />
+      <path d="M12 30l4 8 4-8-4-2-4 2z" fill="#FFC107" />
+      <circle cx="16" cy="34" r="3" fill="#FF385C" />
+    </svg>
+  );
+}
+
+// ── Sample guest reviews (illustrative — the backend only
+//    stores aggregate rating/review counts, not full comments) ──
+const SAMPLE_REVIEWS = [
+  {
+    name: 'Naledi',
+    date: 'January 2026',
+    comment:
+      'Beautiful place, exactly as pictured. The host was quick to respond and check-in was seamless. Would happily stay again.',
+  },
+  {
+    name: 'Liam',
+    date: 'November 2025',
+    comment:
+      'Great location and super clean. A couple of things were a little different from the listing, but the host sorted it out fast.',
+  },
+  {
+    name: 'Amara',
+    date: 'September 2025',
+    comment:
+      'Loved the neighbourhood and the amenities. Communication with the host was excellent from booking through checkout.',
+  },
+];
+
 /** Calculate nights between two ISO date strings */
 function nightsBetween(checkIn, checkOut) {
   if (!checkIn || !checkOut) return 0;
@@ -69,6 +105,7 @@ export default function LocationDetails() {
   const [reserving, setReserving] = useState(false);
   const [reserveMessage, setReserveMessage] = useState('');
   const [reserveSuccess, setReserveSuccess] = useState(false);
+  const [showAllReviews, setShowAllReviews] = useState(false);
 
   // Fetch listing on mount
   useEffect(() => {
@@ -243,6 +280,12 @@ export default function LocationDetails() {
                   {listing.bedrooms} bedroom{listing.bedrooms !== 1 ? 's' : ''} &middot;{' '}
                   {listing.bathrooms} bathroom{listing.bathrooms !== 1 ? 's' : ''}
                 </p>
+                {listing.rating >= 4.5 && (
+                  <div className="superhost-badge" aria-label="Superhost">
+                    <SuperhostBadge />
+                    <span>Superhost</span>
+                  </div>
+                )}
               </div>
               <div className="details-host-avatar" aria-hidden="true">
                 {(listing.host?.username?.[0] ?? 'H').toUpperCase()}
@@ -334,6 +377,33 @@ export default function LocationDetails() {
                       </div>
                     ))}
                   </div>
+                )}
+
+                <div className="reviews-list">
+                  {(showAllReviews ? SAMPLE_REVIEWS : SAMPLE_REVIEWS.slice(0, 2)).map((r) => (
+                    <div className="review-card" key={r.name}>
+                      <div className="review-card__header">
+                        <div className="review-card__avatar" aria-hidden="true">
+                          {r.name[0]}
+                        </div>
+                        <div>
+                          <p className="review-card__name">{r.name}</p>
+                          <p className="review-card__date">{r.date}</p>
+                        </div>
+                      </div>
+                      <p className="review-card__comment">{r.comment}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {!showAllReviews && SAMPLE_REVIEWS.length > 2 && (
+                  <button
+                    type="button"
+                    className="reviews-show-more"
+                    onClick={() => setShowAllReviews(true)}
+                  >
+                    Show more <span aria-hidden="true">›</span>
+                  </button>
                 )}
               </section>
             )}

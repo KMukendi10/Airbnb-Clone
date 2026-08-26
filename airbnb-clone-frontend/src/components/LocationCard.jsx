@@ -25,12 +25,12 @@ export default function LocationCard({ listing }) {
   } = listing;
 
   const image = images[0] || PLACEHOLDER;
-  const displayAmenities = amenities.slice(0, 3).join(' · ');
+  const displayAmenities = amenities.slice(0, 4).join(' · ');
   const hasRating = rating > 0;
 
   return (
     <Link to={`/locations/${_id}`} className="loc-card" aria-label={`View ${title}`}>
-      {/* ── Image ── */}
+      {/* ── Image (left) ── */}
       <div className="loc-card__img-wrap">
         <img
           src={image}
@@ -38,8 +38,6 @@ export default function LocationCard({ listing }) {
           className="loc-card__img"
           loading="lazy"
         />
-        {/* Type badge */}
-        <span className="loc-card__badge">{type}</span>
         {/* Wishlist button (decorative in this demo) */}
         <button
           className="loc-card__wishlist"
@@ -57,31 +55,37 @@ export default function LocationCard({ listing }) {
         </button>
       </div>
 
-      {/* ── Body ── */}
+      {/* ── Details (right) ── */}
       <div className="loc-card__body">
-        <div className="loc-card__row">
+        <div className="loc-card__top">
+          <span className="loc-card__type">{type}</span>
+          <p className="loc-card__title">{title}</p>
           <p className="loc-card__location">{location}</p>
-          {hasRating && (
-            <span className="loc-card__rating" aria-label={`Rating: ${rating.toFixed(1)}`}>
-              ★ {rating.toFixed(1)}
-            </span>
+
+          {displayAmenities && (
+            <p className="loc-card__amenities">{displayAmenities}</p>
           )}
         </div>
 
-        <p className="loc-card__title">{title}</p>
+        <div className="loc-card__bottom">
+          <div className="loc-card__row">
+            {hasRating && (
+              <span className="loc-card__rating" aria-label={`Rating: ${rating.toFixed(1)}`}>
+                ★ {rating.toFixed(1)}
+              </span>
+            )}
+            {reviews > 0 && (
+              <span className="loc-card__reviews">
+                ({reviews} review{reviews !== 1 ? 's' : ''})
+              </span>
+            )}
+          </div>
 
-        {displayAmenities && (
-          <p className="loc-card__amenities">{displayAmenities}</p>
-        )}
-
-        {reviews > 0 && (
-          <p className="loc-card__reviews">{reviews} review{reviews !== 1 ? 's' : ''}</p>
-        )}
-
-        <p className="loc-card__price">
-          <span className="loc-card__price-amount">R{price.toLocaleString()}</span>
-          <span className="loc-card__price-night"> / night</span>
-        </p>
+          <p className="loc-card__price">
+            <span className="loc-card__price-amount">R{price.toLocaleString()}</span>
+            <span className="loc-card__price-night"> / night</span>
+          </p>
+        </div>
       </div>
     </Link>
   );

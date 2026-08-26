@@ -1,28 +1,33 @@
 /* ============================================================
-   LocationCard – vertical card (image top, details below)
+   LocationCard – horizontal card (image left, details right)
+   Used on the Location / search-results page, per brief spec.
    ============================================================ */
 
 .loc-card {
   display: flex;
-  flex-direction: column;
+  align-items: stretch;
+  gap: 24px;
   text-decoration: none;
   color: inherit;
+  padding: 16px;
   border-radius: var(--radius-lg);
-  overflow: hidden;
-  transition: transform var(--transition-base);
+  border: 1px solid var(--color-border);
+  background: #fff;
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
 }
 
 .loc-card:hover {
-  transform: translateY(-3px);
+  box-shadow: var(--shadow-elevated);
+  transform: translateY(-2px);
 }
 
-/* ── Image wrapper ── */
+/* ── Image (left) ── */
 .loc-card__img-wrap {
   position: relative;
-  width: 100%;
+  flex: 0 0 260px;
   aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--color-bg-alt);
 }
 
@@ -35,21 +40,6 @@
 
 .loc-card:hover .loc-card__img {
   transform: scale(1.06);
-}
-
-/* ── Type badge ── */
-.loc-card__badge {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  background: rgba(255, 255, 255, 0.92);
-  color: var(--color-text);
-  font-size: 11px;
-  font-weight: 700;
-  padding: 4px 9px;
-  border-radius: var(--radius-full);
-  backdrop-filter: blur(4px);
-  pointer-events: none;
 }
 
 /* ── Wishlist button ── */
@@ -80,62 +70,86 @@
   height: 16px;
 }
 
-/* ── Body ── */
+/* ── Details (right) ── */
 .loc-card__body {
-  padding: 12px 4px 4px;
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 3px;
+  justify-content: space-between;
+  padding: 4px 0;
 }
 
-.loc-card__row {
+.loc-card__top {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.loc-card__type {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  text-transform: capitalize;
+}
+
+.loc-card__title {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
 }
 
 .loc-card__location {
   font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.loc-card__rating {
-  font-size: var(--font-size-sm);
-  font-weight: 600;
-  color: var(--color-text);
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
-.loc-card__title {
-  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .loc-card__amenities {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
-  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 2px;
+}
+
+.loc-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.loc-card__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.loc-card__rating {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  white-space: nowrap;
 }
 
 .loc-card__reviews {
   font-size: var(--font-size-sm);
   color: var(--color-text-muted);
+  white-space: nowrap;
 }
 
 .loc-card__price {
-  font-size: var(--font-size-base);
-  margin-top: 4px;
+  font-size: var(--font-size-md);
+  white-space: nowrap;
 }
 
 .loc-card__price-amount {
@@ -146,4 +160,17 @@
 .loc-card__price-night {
   font-weight: 400;
   color: var(--color-text-muted);
+}
+
+/* ── Responsive: stack on narrow screens ── */
+@media (max-width: 640px) {
+  .loc-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .loc-card__img-wrap {
+    flex: none;
+    width: 100%;
+  }
 }

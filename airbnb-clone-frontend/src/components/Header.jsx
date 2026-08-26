@@ -67,11 +67,11 @@ export default function Header({ onFilter }) {
               className="search-segment search-segment--location"
               onClick={() => document.getElementById('header-search-input').focus()}
             >
-              <span className="search-label">Locations</span>
+              <span className="search-label">Location</span>
               <input
                 id="header-search-input"
                 type="text"
-                placeholder="Select a Location"
+                placeholder="Where are you going?"
                 value={locationInput}
                 onChange={(e) => setLocationInput(e.target.value)}
                 aria-label="Search destinations"
@@ -82,22 +82,22 @@ export default function Header({ onFilter }) {
             <span className="search-divider" aria-hidden="true" />
 
             <button type="button" className="search-segment search-segment--date">
-              <span className="search-label">Check in date</span>
-              <span className="search-value">Select date</span>
+              <span className="search-label">Check in</span>
+              <span className="search-value">Add dates</span>
             </button>
 
             <span className="search-divider" aria-hidden="true" />
 
             <button type="button" className="search-segment search-segment--date">
-              <span className="search-label">Checkout date</span>
-              <span className="search-value">Select date</span>
+              <span className="search-label">Check out</span>
+              <span className="search-value">Add dates</span>
             </button>
 
             <span className="search-divider" aria-hidden="true" />
 
             <button type="button" className="search-segment search-segment--guests">
               <span className="search-label">Guests</span>
-              <span className="search-value">0 guests</span>
+              <span className="search-value">Add guests</span>
             </button>
 
             <button type="submit" className="search-btn" aria-label="Search">
