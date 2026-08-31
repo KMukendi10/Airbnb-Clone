@@ -10,7 +10,8 @@
 
 /* ── Section helpers ── */
 .section {
-  padding: 48px 0;
+  padding-top: 48px;
+  padding-bottom: 48px;
 }
 
 .section-title {
@@ -101,22 +102,21 @@
 
 .inspiration-card {
   display: flex;
-  align-items: center;
-  gap: 12px;
+  flex-direction: column;
   cursor: pointer;
   border-radius: var(--radius-md);
-  padding: 8px;
-  transition: background var(--transition-fast);
+  overflow: hidden;
+  transition: transform var(--transition-base), box-shadow var(--transition-base);
 }
 
 .inspiration-card:hover {
-  background: var(--color-bg-alt);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .inspiration-card__img-wrap {
-  width: 64px;
-  height: 64px;
-  border-radius: var(--radius-sm);
+  width: 100%;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -126,29 +126,31 @@
   height: 100%;
   object-fit: cover;
   transition: transform 0.4s ease;
+  display: block;
 }
 
 .inspiration-card:hover .inspiration-card__img {
   transform: scale(1.06);
 }
 
+/* Colored block body, per Figma (pink/magenta/red/orange rotation) */
 .inspiration-card__body {
   min-width: 0;
+  padding: 18px 16px 22px;
+  color: #fff;
 }
 
 .inspiration-card__city {
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  color: var(--color-text);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+  color: #fff;
 }
 
 .inspiration-card__time {
   font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-top: 2px;
+  color: rgba(255, 255, 255, 0.9);
+  margin-top: 6px;
 }
 
 /* ════════════════════════════════════════
@@ -308,104 +310,117 @@
   border-bottom-color: var(--color-text);
 }
 
+/* Plain text destination grid, per Figma (no photos/prices) */
 .getaways-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  row-gap: 20px;
+  column-gap: 20px;
 }
 
-.getaway-card {
+.getaway-link {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: transform var(--transition-base);
+  text-align: left;
 }
 
-.getaway-card:hover {
-  transform: translateY(-4px);
-}
-
-.getaway-card__img-wrap {
-  height: 180px;
-  overflow: hidden;
-  border-radius: var(--radius-md);
-  margin-bottom: 10px;
-}
-
-.getaway-card__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.4s ease;
-}
-
-.getaway-card:hover .getaway-card__img {
-  transform: scale(1.05);
-}
-
-.getaway-card__city {
+.getaway-link__city {
   font-size: var(--font-size-base);
   font-weight: 600;
   color: var(--color-text);
 }
 
-.getaway-card__country {
-  font-size: var(--font-size-sm);
-  color: var(--color-text-muted);
-  margin-top: 2px;
+.getaway-link:hover .getaway-link__city {
+  text-decoration: underline;
 }
 
-.getaway-card__price {
+.getaway-link__city--underline {
+  text-decoration: underline;
+}
+
+.getaway-link__country {
   font-size: var(--font-size-sm);
-  color: var(--color-text);
-  margin-top: 4px;
+  color: var(--color-text-muted);
+}
+
+.getaway-link--more {
+  justify-content: center;
 }
 
 /* ════════════════════════════════════════
    6. Hosting Banner
 ════════════════════════════════════════ */
 .hosting-banner {
-  background: var(--color-bg-alt);
   padding: 0;
+  margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 .hosting-banner__inner {
+  position: relative;
+  min-height: 480px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
   display: flex;
-  align-items: center;
-  gap: 40px;
-  padding-top: 48px;
-  padding-bottom: 48px;
-}
-
-.hosting-banner__text {
-  flex: 1;
-}
-
-.hosting-banner__title {
-  font-size: var(--font-size-2xl);
-  font-weight: 800;
-  color: var(--color-text);
-  margin-bottom: 12px;
-}
-
-.hosting-banner__subtitle {
-  font-size: var(--font-size-md);
-  color: var(--color-text-muted);
-  margin-bottom: 28px;
-  max-width: 460px;
+  align-items: flex-end;
+  padding: 48px;
 }
 
 .hosting-banner__image-wrap {
-  flex: 0 0 42%;
-  height: 300px;
-  border-radius: var(--radius-xl);
-  overflow: hidden;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .hosting-banner__image {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.hosting-banner__inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.55) 100%);
+  z-index: 1;
+}
+
+.hosting-banner__text {
+  position: relative;
+  z-index: 2;
+  max-width: 480px;
+}
+
+.hosting-banner__title {
+  font-size: 44px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
+.hosting-banner__subtitle {
+  font-size: var(--font-size-md);
+  color: rgba(255, 255, 255, 0.92);
+  margin-bottom: 28px;
+  max-width: 420px;
+}
+
+/* White pill button on the dark overlay, per Figma */
+.hosting-banner__btn {
+  background: #fff;
+  color: var(--color-text);
+}
+
+.hosting-banner__btn:hover:not(:disabled) {
+  background: #f0f0f0;
 }
 
 /* ════════════════════════════════════════

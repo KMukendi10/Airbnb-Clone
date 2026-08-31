@@ -20,13 +20,25 @@ export default function LocationCard({ listing }) {
     price,
     rating,
     reviews,
+    guests,
+    bedrooms,
+    bathrooms,
     amenities = [],
     images = [],
   } = listing;
 
   const image = images[0] || PLACEHOLDER;
-  const displayAmenities = amenities.slice(0, 4).join(' · ');
+  const displayAmenities = amenities.slice(0, 3).join(' · ');
   const hasRating = rating > 0;
+
+  const statsLine = [
+    guests ? `${guests} guest${guests !== 1 ? 's' : ''}` : null,
+    type,
+    bedrooms ? `${bedrooms} bed${bedrooms !== 1 ? 's' : ''}` : null,
+    bathrooms ? `${bathrooms} bath${bathrooms !== 1 ? 's' : ''}` : null,
+  ]
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <Link to={`/locations/${_id}`} className="loc-card" aria-label={`View ${title}`}>
@@ -58,14 +70,17 @@ export default function LocationCard({ listing }) {
       {/* ── Details (right) ── */}
       <div className="loc-card__body">
         <div className="loc-card__top">
-          <span className="loc-card__type">{type}</span>
+          <span className="loc-card__type">{type} in {location}</span>
           <p className="loc-card__title">{title}</p>
-          <p className="loc-card__location">{location}</p>
+
+          {statsLine && <p className="loc-card__stats">{statsLine}</p>}
 
           {displayAmenities && (
             <p className="loc-card__amenities">{displayAmenities}</p>
           )}
         </div>
+
+        <hr className="loc-card__divider" />
 
         <div className="loc-card__bottom">
           <div className="loc-card__row">

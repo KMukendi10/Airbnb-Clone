@@ -74,38 +74,72 @@ const INSPIRATION_CARDS = [
   },
 ];
 
-// ── Getaway tabs data ──────────────────────────────────────
-const GETAWAY_TABS = ['Amazing views', 'Beachfront', 'Cabins', 'Trending'];
+// Colour rotation for the inspiration cards, per Figma (pink/magenta/red/orange)
+const INSPIRATION_COLORS = ['#E31C5F', '#B0219E', '#E1264A', '#E0562C'];
 
-const GETAWAY_CARDS = {
-  'Amazing views': [
-    { id: 1, city: 'Drakensberg', country: 'South Africa', price: 'From R1 200/night', image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&q=80' },
-    { id: 2, city: 'Table Mountain', country: 'South Africa', price: 'From R2 100/night', image: 'https://images.unsplash.com/photo-1580060839134-75a5edca2e99?w=400&q=80' },
-    { id: 3, city: 'Pilanesberg', country: 'South Africa', price: 'From R850/night', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&q=80' },
-    { id: 4, city: 'Tsitsikamma', country: 'South Africa', price: 'From R950/night', image: 'https://images.unsplash.com/photo-1501854140801-50d01698950b?w=400&q=80' },
+// ── Getaway tabs data (plain text destination grid, per Figma) ──
+const GETAWAY_TABS = [
+  'Destinations for arts & culture',
+  'Destinations for outdoor adventure',
+  'Mountain cabins',
+  'Beach destinations',
+  'Popular destinations',
+  'Unique Stays',
+];
+
+const GETAWAY_DESTINATIONS = {
+  'Destinations for arts & culture': [
+    { id: 1, city: 'Johannesburg', country: 'Gauteng' },
+    { id: 2, city: 'Cape Town', country: 'Western Cape' },
+    { id: 3, city: 'Pretoria', country: 'Gauteng' },
+    { id: 4, city: 'Durban', country: 'KwaZulu-Natal' },
+    { id: 5, city: 'Stellenbosch', country: 'Western Cape' },
+    { id: 6, city: 'Barcelona', country: 'Catalonia' },
+    { id: 7, city: 'Prague', country: 'Czechia' },
+    { id: 8, city: 'Washington', country: 'District of Columbia' },
+    { id: 9, city: 'Keswick', country: 'England' },
+    { id: 10, city: 'London', country: 'England' },
+    { id: 11, city: 'Scarborough', country: 'England' },
   ],
-  'Beachfront': [
-    { id: 5, city: 'Clifton', country: 'Cape Town', price: 'From R3 500/night', image: 'https://images.unsplash.com/photo-1510414842594-a61c69b5ae57?w=400&q=80' },
-    { id: 6, city: 'Umhlanga', country: 'Durban', price: 'From R1 800/night', image: 'https://images.unsplash.com/photo-1600002415506-dd746cef5356?w=400&q=80' },
-    { id: 7, city: 'Plettenberg Bay', country: 'South Africa', price: 'From R2 200/night', image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=400&q=80' },
-    { id: 8, city: 'Hermanus', country: 'Western Cape', price: 'From R1 500/night', image: 'https://images.unsplash.com/photo-1519677100203-a0e668c92439?w=400&q=80' },
+  'Destinations for outdoor adventure': [
+    { id: 12, city: 'Drakensberg', country: 'KwaZulu-Natal' },
+    { id: 13, city: 'Kruger', country: 'Mpumalanga' },
+    { id: 14, city: 'Tsitsikamma', country: 'Eastern Cape' },
+    { id: 15, city: 'Pilanesberg', country: 'North West' },
   ],
-  'Cabins': [
-    { id: 9, city: 'Clarens', country: 'Free State', price: 'From R780/night', image: 'https://images.unsplash.com/photo-1510798831971-661eb04b3739?w=400&q=80' },
-    { id: 10, city: 'Dullstroom', country: 'Mpumalanga', price: 'From R650/night', image: 'https://images.unsplash.com/photo-1449158743715-0a90ebb6d2d8?w=400&q=80' },
-    { id: 11, city: 'Hazyview', country: 'Limpopo', price: 'From R900/night', image: 'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&q=80' },
-    { id: 12, city: 'Swellendam', country: 'Western Cape', price: 'From R720/night', image: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=400&q=80' },
+  'Mountain cabins': [
+    { id: 16, city: 'Dullstroom', country: 'Mpumalanga' },
+    { id: 17, city: 'Clarens', country: 'Free State' },
+    { id: 18, city: 'Hazyview', country: 'Limpopo' },
+    { id: 19, city: 'Swellendam', country: 'Western Cape' },
   ],
-  'Trending': [
-    { id: 13, city: 'Johannesburg', country: 'Gauteng', price: 'From R1 100/night', image: 'https://images.unsplash.com/photo-1577948000111-9c970dfe3743?w=400&q=80' },
-    { id: 14, city: 'Kruger', country: 'South Africa', price: 'From R1 600/night', image: 'https://images.unsplash.com/photo-1516026672322-bc52d61a55d5?w=400&q=80' },
-    { id: 15, city: 'Franschhoek', country: 'Western Cape', price: 'From R2 400/night', image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=400&q=80' },
-    { id: 16, city: 'Mossel Bay', country: 'Western Cape', price: 'From R980/night', image: 'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=400&q=80' },
+  'Beach destinations': [
+    { id: 20, city: 'Umhlanga', country: 'KwaZulu-Natal' },
+    { id: 21, city: 'Clifton', country: 'Western Cape' },
+    { id: 22, city: 'Hermanus', country: 'Western Cape' },
+    { id: 23, city: 'Plettenberg Bay', country: 'Western Cape' },
+  ],
+  'Popular destinations': [
+    { id: 24, city: 'Johannesburg', country: 'Gauteng' },
+    { id: 25, city: 'Cape Town', country: 'Western Cape' },
+    { id: 26, city: 'Durban', country: 'KwaZulu-Natal' },
+    { id: 27, city: 'Phoenix', country: 'Arizona' },
+    { id: 28, city: 'Los Angeles', country: 'California' },
+    { id: 29, city: 'San Diego', country: 'California' },
+    { id: 30, city: 'San Francisco', country: 'California' },
+    { id: 31, city: 'Hot Springs', country: 'Arkansas' },
+  ],
+  'Unique Stays': [
+    { id: 32, city: 'Franschhoek', country: 'Western Cape' },
+    { id: 33, city: 'Mossel Bay', country: 'Western Cape' },
+    { id: 34, city: 'Knysna', country: 'Western Cape' },
+    { id: 35, city: 'Bloemfontein', country: 'Free State' },
   ],
 };
 
 export default function Home() {
-  const [activeTab, setActiveTab] = useState('Amazing views');
+  const [activeTab, setActiveTab] = useState(GETAWAY_TABS[0]);
+  const [showAllGetaways, setShowAllGetaways] = useState(false);
   const navigate = useNavigate();
 
   function handleFilter(location) {
@@ -146,7 +180,7 @@ export default function Home() {
       <section className="section inspiration-section container" aria-label="Inspiration for your next trip">
         <h2 className="section-title">Inspiration for your next trip</h2>
         <div className="inspiration-grid">
-          {INSPIRATION_CARDS.map((card) => (
+          {INSPIRATION_CARDS.map((card, i) => (
             <article
               key={card.id}
               className="inspiration-card"
@@ -159,7 +193,10 @@ export default function Home() {
               <div className="inspiration-card__img-wrap">
                 <img src={card.image} alt={card.city} className="inspiration-card__img" loading="lazy" />
               </div>
-              <div className="inspiration-card__body">
+              <div
+                className="inspiration-card__body"
+                style={{ backgroundColor: INSPIRATION_COLORS[i % INSPIRATION_COLORS.length] }}
+              >
                 <p className="inspiration-card__city">{card.city}</p>
                 <p className="inspiration-card__time">{card.time}</p>
               </div>
@@ -240,7 +277,10 @@ export default function Home() {
             <button
               key={tab}
               className={`getaways-tab${activeTab === tab ? ' getaways-tab--active' : ''}`}
-              onClick={() => setActiveTab(tab)}
+              onClick={() => {
+                setActiveTab(tab);
+                setShowAllGetaways(false);
+              }}
               role="tab"
               aria-selected={activeTab === tab}
             >
@@ -249,27 +289,26 @@ export default function Home() {
           ))}
         </div>
 
-        {/* Tab content */}
+        {/* Plain text destination grid, per Figma */}
         <div className="getaways-grid" role="tabpanel" aria-label={activeTab}>
-          {GETAWAY_CARDS[activeTab].map((card) => (
-            <article
-              key={card.id}
-              className="getaway-card"
-              onClick={() => navigate(`/locations?location=${encodeURIComponent(card.city)}`)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === 'Enter' && navigate(`/locations?location=${encodeURIComponent(card.city)}`)}
+          {(showAllGetaways
+            ? GETAWAY_DESTINATIONS[activeTab]
+            : GETAWAY_DESTINATIONS[activeTab].slice(0, 12)
+          ).map((dest) => (
+            <button
+              key={dest.id}
+              className="getaway-link"
+              onClick={() => navigate(`/locations?location=${encodeURIComponent(dest.city)}`)}
             >
-              <div className="getaway-card__img-wrap">
-                <img src={card.image} alt={card.city} className="getaway-card__img" loading="lazy" />
-              </div>
-              <div className="getaway-card__body">
-                <p className="getaway-card__city">{card.city}</p>
-                <p className="getaway-card__country">{card.country}</p>
-                <p className="getaway-card__price">{card.price}</p>
-              </div>
-            </article>
+              <span className="getaway-link__city">{dest.city}</span>
+              <span className="getaway-link__country">{dest.country}</span>
+            </button>
           ))}
+          {!showAllGetaways && GETAWAY_DESTINATIONS[activeTab].length > 12 && (
+            <button className="getaway-link getaway-link--more" onClick={() => setShowAllGetaways(true)}>
+              <span className="getaway-link__city getaway-link__city--underline">Show more</span>
+            </button>
+          )}
         </div>
       </section>
 
@@ -284,10 +323,10 @@ export default function Home() {
               Ask a Superhost — We'll match you with an experienced host in your area.
             </p>
             <button
-              className="btn btn-dark hosting-banner__btn"
+              className="btn hosting-banner__btn"
               onClick={() => navigate('/login')}
             >
-              Learn more
+              Ask a Superhost
             </button>
           </div>
           <div className="hosting-banner__image-wrap" aria-hidden="true">
