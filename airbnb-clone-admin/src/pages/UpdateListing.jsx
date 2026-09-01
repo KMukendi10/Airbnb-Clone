@@ -36,7 +36,7 @@ export default function UpdateListing() {
   if (loading) {
     return (
       <div className="form-page-wrapper">
-        <Header />
+        <Header toolbar={[{ label: 'View my listings', to: '/' }]} />
         <main className="form-page-main">
           <div className="form-page-status">
             <div className="spinner" aria-hidden="true" />
@@ -51,7 +51,7 @@ export default function UpdateListing() {
   if (error || !listing) {
     return (
       <div className="form-page-wrapper">
-        <Header />
+        <Header toolbar={[{ label: 'View my listings', to: '/' }]} />
         <main className="form-page-main">
           <div className="form-page-status form-page-status--error" role="alert">
             <p>⚠ {error || 'Listing not found.'}</p>
@@ -66,7 +66,7 @@ export default function UpdateListing() {
 
   return (
     <div className="form-page-wrapper">
-      <Header />
+      <Header toolbar={[{ label: 'View my listings', to: '/' }]} />
 
       <main className="form-page-main">
         {/* Breadcrumb */}

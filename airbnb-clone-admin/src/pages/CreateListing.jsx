@@ -21,7 +21,7 @@ export default function CreateListing() {
 
   return (
     <div className="form-page-wrapper">
-      <Header />
+      <Header toolbar={[{ label: 'View my listings', to: '/' }]} />
 
       <main className="form-page-main">
         {/* Breadcrumb */}

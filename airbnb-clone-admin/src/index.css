@@ -111,7 +111,8 @@ h1, h2, h3, h4, h5, h6 {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 28px;
+  padding-left: 28px;
+  padding-right: 28px;
   box-sizing: border-box;
 }
 
