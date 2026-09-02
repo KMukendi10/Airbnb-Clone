@@ -304,7 +304,33 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ════ 5. Future Getaways (tabs + plain text grid) ════ */}
+      {/* ════ 5. Questions About Hosting — padded image banner ════ */}
+      <section className="hosting-banner-wrap" aria-label="Questions about hosting">
+        <div className="hosting-banner">
+          <div className="hosting-banner__bg">
+            <img
+              src="https://images.unsplash.com/photo-1530053969600-caed2596d242?w=1800&q=85"
+              alt="Happy host smiling"
+              className="hosting-banner__img"
+              loading="lazy"
+            />
+            <div className="hosting-banner__overlay" aria-hidden="true" />
+          </div>
+          <div className="hosting-banner__content">
+            <h2 className="hosting-banner__title">
+              Questions<br />about<br />hosting?
+            </h2>
+            <button
+              className="btn hosting-banner__btn"
+              onClick={() => navigate('/login')}
+            >
+              Ask a Superhost
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* ════ 6. Future Getaways (tabs + plain text grid) ════ */}
       <section
         className="section getaways-section container"
         aria-label="Inspiration for future getaways"
@@ -351,30 +377,6 @@ export default function Home() {
               </span>
             </button>
           )}
-        </div>
-      </section>
-
-      {/* ════ 6. Questions About Hosting — full-bleed dark banner ════ */}
-      <section className="hosting-banner" aria-label="Questions about hosting">
-        <div className="hosting-banner__bg">
-          <img
-            src="https://images.unsplash.com/photo-1530053969600-caed2596d242?w=1800&q=85"
-            alt="Happy host smiling"
-            className="hosting-banner__img"
-            loading="lazy"
-          />
-          <div className="hosting-banner__overlay" aria-hidden="true" />
-        </div>
-        <div className="hosting-banner__content container">
-          <h2 className="hosting-banner__title">
-            Questions<br />about<br />hosting?
-          </h2>
-          <button
-            className="btn hosting-banner__btn"
-            onClick={() => navigate('/login')}
-          >
-            Ask a Superhost
-          </button>
         </div>
       </section>
 

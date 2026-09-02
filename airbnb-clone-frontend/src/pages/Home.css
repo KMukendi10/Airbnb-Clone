@@ -327,7 +327,82 @@
 }
 
 /* ════════════════════════════════════════
-   5. Future Getaways
+   5. Hosting Banner — padded with left/right margin,
+   rounded corners, image contained within padding
+════════════════════════════════════════ */
+.hosting-banner-wrap {
+  padding: 0 24px;
+  max-width: var(--max-width);
+  margin: 0 auto 8px;
+  box-sizing: border-box;
+}
+
+.hosting-banner {
+  position: relative;
+  min-height: 400px;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hosting-banner__bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hosting-banner__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.hosting-banner__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to right,
+    rgba(0, 0, 0, 0.55) 0%,
+    rgba(0, 0, 0, 0.25) 60%,
+    rgba(0, 0, 0, 0.08) 100%
+  );
+}
+
+.hosting-banner__content {
+  position: relative;
+  z-index: 1;
+  padding: 48px;
+}
+
+.hosting-banner__title {
+  font-size: 48px;
+  font-weight: 800;
+  line-height: 1.05;
+  color: #fff;
+  margin-bottom: 24px;
+  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
+}
+
+.hosting-banner__btn {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--color-text);
+  font-size: var(--font-size-sm);
+  font-weight: 700;
+  padding: 11px 20px;
+  border-radius: var(--radius-sm);
+  border: none;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.hosting-banner__btn:hover {
+  background: #fff;
+}
+
+/* ════════════════════════════════════════
+   6. Future Getaways
    Tabs with underline active state +
    plain 4-col text destination grid (no images)
    Wrapped in a dashed/solid border per Figma
@@ -421,76 +496,6 @@
 }
 
 /* ════════════════════════════════════════
-   6. Hosting Banner — full-bleed dark image
-   Large white text bottom-left + pill button
-════════════════════════════════════════ */
-.hosting-banner {
-  position: relative;
-  margin-top: 8px;
-  min-height: 480px;
-  overflow: hidden;
-  display: flex;
-  align-items: flex-end;
-}
-
-.hosting-banner__bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-}
-
-.hosting-banner__img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center 20%;
-}
-
-.hosting-banner__overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.55) 0%,
-    rgba(0, 0, 0, 0.25) 60%,
-    rgba(0, 0, 0, 0.1) 100%
-  );
-}
-
-.hosting-banner__content {
-  position: relative;
-  z-index: 1;
-  padding-bottom: 56px;
-  padding-top: 56px;
-}
-
-.hosting-banner__title {
-  font-size: 52px;
-  font-weight: 800;
-  line-height: 1.05;
-  color: #fff;
-  margin-bottom: 24px;
-  text-shadow: 0 1px 6px rgba(0, 0, 0, 0.3);
-}
-
-/* White pill button, small — "Ask a Superhost" */
-.hosting-banner__btn {
-  background: rgba(255, 255, 255, 0.95);
-  color: var(--color-text);
-  font-size: var(--font-size-sm);
-  font-weight: 700;
-  padding: 12px 22px;
-  border-radius: var(--radius-sm);
-  border: none;
-  cursor: pointer;
-  transition: background var(--transition-fast);
-}
-
-.hosting-banner__btn:hover {
-  background: #fff;
-}
-
-/* ════════════════════════════════════════
    Responsive
 ════════════════════════════════════════ */
 @media (max-width: 1024px) {
@@ -518,7 +523,11 @@
   }
 
   .hosting-banner__title {
-    font-size: 40px;
+    font-size: 36px;
+  }
+
+  .hosting-banner {
+    min-height: 340px;
   }
 }
 
@@ -565,11 +574,19 @@
   }
 
   .hosting-banner__title {
-    font-size: 32px;
+    font-size: 28px;
   }
 
   .hosting-banner {
-    min-height: 360px;
+    min-height: 300px;
+  }
+
+  .hosting-banner__content {
+    padding: 32px 28px;
+  }
+
+  .hosting-banner-wrap {
+    padding: 0 16px;
   }
 }
 
