@@ -148,12 +148,14 @@ export default function Home() {
 
   return (
     <div className="home-page">
-      <Header onFilter={handleFilter} />
 
       {/* ════════════════════════════════════════
-          1. Hero Section
+          1. Hero Section — header overlays this
       ════════════════════════════════════════ */}
       <section className="hero" aria-label="Hero banner">
+        {/* Transparent header sits inside the hero */}
+        <Header onFilter={handleFilter} transparent />
+
         <div className="hero-bg">
           <img
             src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1800&q=90"
