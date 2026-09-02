@@ -335,7 +335,7 @@
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 24px 40px;
+  padding: 0 40px 40px;
   box-sizing: border-box;
 }
 
@@ -586,7 +586,7 @@
   }
 
   .hosting-banner-wrap {
-    padding: 0 16px;
+    padding: 0 20px 32px;
   }
 }
 
