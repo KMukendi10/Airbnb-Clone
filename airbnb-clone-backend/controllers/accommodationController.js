@@ -1,12 +1,42 @@
 const Accommodation = require('../models/Accommodation');
 const asyncHandler = require('../utils/asyncHandler');
 
+// Helper: merge URL-string images (from the form's existingImages JSON field)
+// with any physically uploaded files (req.files from Multer).
+// The admin dashboard sends existing image URLs as a JSON string in
+// req.body.existingImages; the upload middleware (if wired) populates req.files.
+function buildImages(req) {
+  let images = [];
+
+  // URL-based images sent from the admin form as a JSON-encoded array
+  if (req.body.existingImages) {
+    try {
+      const parsed = JSON.parse(req.body.existingImages);
+      if (Array.isArray(parsed)) images = parsed;
+    } catch (_) {
+      // not JSON — treat as a single URL string
+      if (req.body.existingImages) images = [req.body.existingImages];
+    }
+  }
+
+  // Physically uploaded files added by Multer (optional upload middleware)
+  if (req.files && req.files.length > 0) {
+    const uploadedUrls = req.files.map((f) => `/uploads/${f.filename}`);
+    images = [...images, ...uploadedUrls];
+  }
+
+  return images;
+}
+
 // @desc    Create a new accommodation listing
 // @route   POST /api/accommodations
 // @access  Private (host)
 const createAccommodation = asyncHandler(async (req, res) => {
+  const images = buildImages(req);
+
   const accommodation = await Accommodation.create({
     ...req.body,
+    ...(images.length > 0 && { images }), // only override if images were provided
     host: req.user._id, // always trust the authenticated user, never the client
   });
 
@@ -65,7 +95,11 @@ const updateAccommodation = asyncHandler(async (req, res) => {
     throw new Error('Not authorized to update this listing');
   }
 
+  // Rebuild images array (URL-based from form + any new file uploads)
+  const images = buildImages(req);
   Object.assign(accommodation, req.body);
+  if (images.length > 0) accommodation.images = images;
+
   const updated = await accommodation.save();
 
   res.json(updated);

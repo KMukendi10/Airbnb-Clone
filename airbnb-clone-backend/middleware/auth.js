@@ -17,21 +17,25 @@ const protect = asyncHandler(async (req, res, next) => {
     throw new Error('Not authorized, no token provided');
   }
 
+  // Verify the token signature/expiry first; if it fails, reject immediately.
+  let decoded;
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.id);
-
-    if (!user) {
-      res.status(401);
-      throw new Error('Not authorized, user no longer exists');
-    }
-
-    req.user = user;
-    next();
-  } catch (error) {
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (_err) {
     res.status(401);
     throw new Error('Not authorized, token invalid or expired');
   }
+
+  // Token is valid — look up the user in the database.
+  const user = await User.findById(decoded.id);
+
+  if (!user) {
+    res.status(401);
+    throw new Error('Not authorized, user no longer exists');
+  }
+
+  req.user = user;
+  next();
 });
 
 // Restricts a route to specific roles, e.g. authorize('host').
