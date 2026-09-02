@@ -575,6 +575,38 @@
   margin: 4px 0;
 }
 
+/* ════ Where you'll sleep ════ */
+.sleep-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 16px;
+}
+
+.sleep-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sleep-card__icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.sleep-card__name {
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+.sleep-card__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
 /* ════ Responsive ════ */
 @media (max-width: 1024px) {
   .details-body {

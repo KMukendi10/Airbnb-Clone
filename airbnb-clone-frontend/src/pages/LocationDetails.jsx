@@ -344,6 +344,24 @@ export default function LocationDetails() {
 
             <hr className="details-divider" />
 
+            {/* Where you'll sleep */}
+            <section aria-label="Where you'll sleep">
+              <h3 className="details-section-title">Where you&rsquo;ll sleep</h3>
+              <div className="sleep-grid">
+                {Array.from({ length: listing.bedrooms || 1 }, (_, i) => (
+                  <div key={i} className="sleep-card">
+                    <span className="sleep-card__icon" aria-hidden="true">🛏️</span>
+                    <p className="sleep-card__name">
+                      {listing.bedrooms === 1 ? 'Bedroom' : `Bedroom ${i + 1}`}
+                    </p>
+                    <p className="sleep-card__desc">1 {i === 0 ? 'queen' : 'double'} bed</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <hr className="details-divider" />
+
             {/* Reviews summary */}
             {listing.rating > 0 && (
               <section id="reviews" aria-label="Ratings">
