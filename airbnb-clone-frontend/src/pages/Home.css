@@ -327,19 +327,19 @@
 }
 
 /* ════════════════════════════════════════
-   5. Hosting Banner — padded with left/right margin,
-   rounded corners, image contained within padding
+   5. Hosting Banner — contained card width,
+   padded left/right, rounded corners
 ════════════════════════════════════════ */
 .hosting-banner-wrap {
-  padding: 0 24px;
+  padding: 8px 24px 0;
   max-width: var(--max-width);
-  margin: 0 auto 8px;
+  margin: 0 auto;
   box-sizing: border-box;
 }
 
 .hosting-banner {
   position: relative;
-  min-height: 400px;
+  min-height: 360px;
   border-radius: var(--radius-xl);
   overflow: hidden;
   display: flex;
@@ -404,13 +404,10 @@
 /* ════════════════════════════════════════
    6. Future Getaways
    Tabs with underline active state +
-   plain 4-col text destination grid (no images)
-   Wrapped in a dashed/solid border per Figma
+   plain 4-col text destination grid (no images, no border)
 ════════════════════════════════════════ */
 .getaways-section {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: 32px !important;
+  padding: 32px 0 !important;
 }
 
 /* Tab bar */
@@ -570,7 +567,7 @@
   }
 
   .getaways-section {
-    padding: 20px !important;
+    padding: 20px 0 !important;
   }
 
   .hosting-banner__title {
