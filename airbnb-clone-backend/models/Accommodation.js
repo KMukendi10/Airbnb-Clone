@@ -58,6 +58,11 @@ const accommodationSchema = new mongoose.Schema(
     enhancedCleaning: { type: Boolean, default: false },
     selfCheckIn: { type: Boolean, default: false },
 
+    // Booking policy flags — power the "Free cancellation" / "Instant Book"
+    // filter pills on the Location (search results) page.
+    freeCancellation: { type: Boolean, default: false },
+    instantBook: { type: Boolean, default: false },
+
     rating: { type: Number, min: 0, max: 5, default: 0 },
     reviews: { type: Number, default: 0 },
     specificRatings: { type: specificRatingsSchema, default: () => ({}) },

@@ -48,6 +48,8 @@ const makeAccommodations = (hostId) => [
     occupancyTaxes: 300,
     enhancedCleaning: true,
     selfCheckIn: true,
+    freeCancellation: true,
+    instantBook: true,
     rating: 4.8,
     reviews: 320,
     specificRatings: {
@@ -83,6 +85,8 @@ const makeAccommodations = (hostId) => [
     occupancyTaxes: 150,
     enhancedCleaning: false,
     selfCheckIn: true,
+    freeCancellation: true,
+    instantBook: false,
     rating: 4.5,
     reviews: 87,
     specificRatings: {
@@ -118,6 +122,8 @@ const makeAccommodations = (hostId) => [
     occupancyTaxes: 350,
     enhancedCleaning: true,
     selfCheckIn: false,
+    freeCancellation: false,
+    instantBook: true,
     rating: 4.9,
     reviews: 214,
     specificRatings: {
@@ -151,6 +157,8 @@ const makeAccommodations = (hostId) => [
     occupancyTaxes: 100,
     enhancedCleaning: false,
     selfCheckIn: false,
+    freeCancellation: false,
+    instantBook: false,
     rating: 4.7,
     reviews: 62,
     specificRatings: {
