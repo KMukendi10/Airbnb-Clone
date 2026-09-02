@@ -47,7 +47,7 @@ const HOTEL_TYPES = [
 
 const NAV_TABS = ['Places to stay', 'Experiences', 'Online Experiences'];
 
-export default function Header({ onFilter, transparent = false }) {
+export default function Header({ onFilter, transparent = false, defaultLocation = '' }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
@@ -65,10 +65,19 @@ export default function Header({ onFilter, transparent = false }) {
   const whereRef = useRef(null);
 
   // Compact search (standard header)
-  const [locationInput, setLocationInput] = useState('');
+  const [locationInput, setLocationInput] = useState(defaultLocation);
+  const [datesOpen, setDatesOpen] = useState(false);
+  const [guestsOpen, setGuestsOpen] = useState(false);
+  const datesRef = useRef(null);
+  const guestsRef = useRef(null);
 
   // Today string for date min
   const today = new Date().toISOString().split('T')[0];
+
+  // Keep the compact search location in sync with the page's active filter
+  useEffect(() => {
+    setLocationInput(defaultLocation);
+  }, [defaultLocation]);
 
   // Close profile dropdown on outside click
   useEffect(() => {
@@ -91,6 +100,37 @@ export default function Header({ onFilter, transparent = false }) {
     document.addEventListener('mousedown', handleOutside);
     return () => document.removeEventListener('mousedown', handleOutside);
   }, []);
+
+  // Close compact dates / guests popovers on outside click
+  useEffect(() => {
+    function handleOutside(e) {
+      if (datesRef.current && !datesRef.current.contains(e.target)) setDatesOpen(false);
+      if (guestsRef.current && !guestsRef.current.contains(e.target)) setGuestsOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
+  // Format a yyyy-mm-dd string as "Feb 19"
+  function formatShortDate(value) {
+    if (!value) return '';
+    const d = new Date(`${value}T00:00:00`);
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  }
+
+  // Build the compact "Feb 19-26" style label for the dates segment
+  const datesLabel = (() => {
+    if (!checkIn && !checkOut) return 'Add dates';
+    if (checkIn && !checkOut) return `${formatShortDate(checkIn)} –`;
+    const inD = new Date(`${checkIn}T00:00:00`);
+    const outD = new Date(`${checkOut}T00:00:00`);
+    const sameMonth = inD.getMonth() === outD.getMonth();
+    return sameMonth
+      ? `${formatShortDate(checkIn)}-${outD.getDate()}`
+      : `${formatShortDate(checkIn)} – ${formatShortDate(checkOut)}`;
+  })();
+
+  const guestsLabel = `${guests} guest${guests !== 1 ? 's' : ''}`;
 
   function handleHeroSearch(e) {
     e.preventDefault();
@@ -143,52 +183,98 @@ export default function Header({ onFilter, transparent = false }) {
           </nav>
         ) : (
           <form className="header-search" onSubmit={handleCompactSearch} role="search">
-            <div className="search-pill">
+            <div className="search-pill search-pill--summary">
+              {/* WHERE — plain-text destination segment */}
               <button
                 type="button"
-                className="search-segment search-segment--location"
+                className="search-seg search-seg--location"
                 onClick={() => document.getElementById('header-search-input')?.focus()}
               >
-                <span className="search-label">Where</span>
                 <input
                   id="header-search-input"
                   type="text"
-                  placeholder="Search destinations"
+                  placeholder="Anywhere"
                   value={locationInput}
                   onChange={(e) => setLocationInput(e.target.value)}
-                  className="search-input"
+                  className="search-seg-input"
                   aria-label="Search destinations"
                 />
               </button>
+
               <span className="search-divider" aria-hidden="true" />
-              <button type="button" className="search-segment search-segment--date">
-                <span className="search-label">Check in</span>
-                <input
-                  type="date"
-                  className="search-input"
-                  value={checkIn}
-                  min={today}
-                  onChange={(e) => { setCheckIn(e.target.value); if (checkOut && e.target.value >= checkOut) setCheckOut(''); }}
-                  aria-label="Check-in date"
-                />
-              </button>
+
+              {/* DATES — merged check-in / check-out summary */}
+              <div className="search-seg search-seg--dates" ref={datesRef}>
+                <button
+                  type="button"
+                  className="search-seg-btn"
+                  onClick={() => { setDatesOpen((o) => !o); setGuestsOpen(false); }}
+                  aria-expanded={datesOpen}
+                  aria-haspopup="dialog"
+                >
+                  {datesLabel}
+                </button>
+                {datesOpen && (
+                  <div className="search-popover search-popover--dates" role="dialog" aria-label="Select dates">
+                    <label className="search-popover-field">
+                      <span>Check in</span>
+                      <input
+                        type="date"
+                        value={checkIn}
+                        min={today}
+                        onChange={(e) => { setCheckIn(e.target.value); if (checkOut && e.target.value >= checkOut) setCheckOut(''); }}
+                      />
+                    </label>
+                    <label className="search-popover-field">
+                      <span>Check out</span>
+                      <input
+                        type="date"
+                        value={checkOut}
+                        min={checkIn || today}
+                        onChange={(e) => setCheckOut(e.target.value)}
+                      />
+                    </label>
+                  </div>
+                )}
+              </div>
+
               <span className="search-divider" aria-hidden="true" />
-              <button type="button" className="search-segment search-segment--date">
-                <span className="search-label">Check out</span>
-                <input
-                  type="date"
-                  className="search-input"
-                  value={checkOut}
-                  min={checkIn || today}
-                  onChange={(e) => setCheckOut(e.target.value)}
-                  aria-label="Check-out date"
-                />
-              </button>
-              <span className="search-divider" aria-hidden="true" />
-              <button type="button" className="search-segment search-segment--guests">
-                <span className="search-label">Guests</span>
-                <span className="search-value">{guests > 0 ? `${guests} guest${guests > 1 ? 's' : ''}` : 'Add guests'}</span>
-              </button>
+
+              {/* GUESTS — plain-text summary with stepper popover */}
+              <div className="search-seg search-seg--guests" ref={guestsRef}>
+                <button
+                  type="button"
+                  className="search-seg-btn"
+                  onClick={() => { setGuestsOpen((o) => !o); setDatesOpen(false); }}
+                  aria-expanded={guestsOpen}
+                  aria-haspopup="dialog"
+                >
+                  {guestsLabel}
+                </button>
+                {guestsOpen && (
+                  <div className="search-popover search-popover--guests" role="dialog" aria-label="Select number of guests">
+                    <span className="search-popover-label">Guests</span>
+                    <div className="hero-guest-counter">
+                      <button
+                        type="button"
+                        className="hero-guest-btn"
+                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
+                        aria-label="Remove guest"
+                        disabled={guests <= 1}
+                      >−</button>
+                      <span className="hero-guest-count" aria-live="polite">{guests}</span>
+                      <button
+                        type="button"
+                        className="hero-guest-btn"
+                        onClick={() => setGuests((g) => Math.min(16, g + 1))}
+                        aria-label="Add guest"
+                        disabled={guests >= 16}
+                      >+</button>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <button type="submit" className="search-btn" aria-label="Search">
                 <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
                   <path d="M13 24a11 11 0 1 1 0-22 11 11 0 0 1 0 22zm16.293 3.293-5.647-5.647a13 13 0 1 0-1.414 1.414l5.647 5.647a1 1 0 0 0 1.414-1.414z" fill="currentColor" />
