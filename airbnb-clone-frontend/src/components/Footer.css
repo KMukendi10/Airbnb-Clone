@@ -4,26 +4,7 @@
 
 .site-footer {
   background: var(--color-bg);
-  border-top: 1px solid var(--color-border);
   margin-top: auto;
-}
-
-/* ── Logo banner row ── */
-.footer-logo-row {
-  padding-top: 24px;
-  padding-bottom: 0;
-}
-
-.footer-logo-mark {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer-logo-text {
-  font-size: var(--font-size-md);
-  font-weight: 800;
-  color: var(--color-primary);
 }
 
 /* ── Main columns ── */
