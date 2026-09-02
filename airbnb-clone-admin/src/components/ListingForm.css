@@ -101,6 +101,30 @@
   grid-template-columns: repeat(3, 1fr);
 }
 
+/* Booking-policy checkboxes (Free cancellation / Instant Book) */
+.lf-checkbox-row {
+  grid-template-columns: repeat(2, auto);
+  gap: 24px;
+  margin-top: 4px;
+}
+
+.lf-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-text, #222);
+  cursor: pointer;
+}
+
+.lf-checkbox input[type='checkbox'] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  accent-color: var(--color-primary, #ff385c);
+}
+
 /* ════════════════════════════
    Fields & inputs
 ════════════════════════════ */

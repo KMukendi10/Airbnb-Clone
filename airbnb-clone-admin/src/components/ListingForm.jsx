@@ -26,6 +26,8 @@ const EMPTY_FORM = {
   cleaningFee: 0,
   serviceFee: 0,
   occupancyTaxes: 0,
+  freeCancellation: false,
+  instantBook: false,
 };
 
 const ACCOMMODATION_TYPES = [
@@ -110,6 +112,8 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
         cleaningFee:   Number(form.cleaningFee)    || 0,
         serviceFee:    Number(form.serviceFee)     || 0,
         occupancyTaxes: Number(form.occupancyTaxes) || 0,
+        freeCancellation: !!form.freeCancellation,
+        instantBook:      !!form.instantBook,
         amenities,
         images,
       });
@@ -193,6 +197,26 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
             />
             {errors.location && <p className="lf-error">{errors.location}</p>}
           </div>
+        </div>
+
+        {/* Booking policies — power the guest-facing filter pills */}
+        <div className="lf-row lf-checkbox-row">
+          <label className="lf-checkbox">
+            <input
+              type="checkbox"
+              checked={!!form.freeCancellation}
+              onChange={(e) => set('freeCancellation', e.target.checked)}
+            />
+            Free cancellation
+          </label>
+          <label className="lf-checkbox">
+            <input
+              type="checkbox"
+              checked={!!form.instantBook}
+              onChange={(e) => set('instantBook', e.target.checked)}
+            />
+            Instant Book
+          </label>
         </div>
       </section>
 
