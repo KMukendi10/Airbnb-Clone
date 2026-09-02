@@ -327,19 +327,22 @@
 }
 
 /* ════════════════════════════════════════
-   5. Hosting Banner — contained card width,
-   padded left/right, rounded corners
+   5. Hosting Banner
+   Same width as .container sections, rounded corners,
+   left/right padding matches page gutter
 ════════════════════════════════════════ */
 .hosting-banner-wrap {
-  padding: 8px 24px 0;
+  width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
+  padding: 0 24px 40px;
   box-sizing: border-box;
 }
 
 .hosting-banner {
   position: relative;
-  min-height: 360px;
+  width: 100%;
+  min-height: 400px;
   border-radius: var(--radius-xl);
   overflow: hidden;
   display: flex;
