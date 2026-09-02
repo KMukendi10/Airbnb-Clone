@@ -55,6 +55,19 @@ export default function Footer() {
 
   return (
     <footer className="site-footer" aria-label="Site footer">
+
+      {/* ── Logo banner row (matches Figma top of footer) ── */}
+      <div className="footer-logo-row container">
+        <div className="footer-logo-mark">
+          <svg viewBox="0 0 32 32" width="22" height="22" aria-hidden="true">
+            <path
+              d="M16 1C7.163 1 0 8.163 0 17c0 5.59 2.832 10.51 7.143 13.49L16 31l8.857-.51C29.168 27.51 32 22.59 32 17 32 8.163 24.837 1 16 1z"
+              fill="var(--color-primary)"
+            />
+          </svg>
+          <span className="footer-logo-text">Airbnb Footer</span>
+        </div>
+      </div>
       {/* ── Main columns ── */}
       <div className="footer-columns container">
         {FOOTER_COLUMNS.map((col) => (
