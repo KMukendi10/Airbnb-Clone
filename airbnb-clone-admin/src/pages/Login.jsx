@@ -44,14 +44,14 @@ export default function Login() {
           {error && <p className="admin-login-error" role="alert">{error}</p>}
 
           <label>
-            Username
+            Username / Email
             <input
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoComplete="username"
               autoFocus
-              placeholder="Enter your username"
+              placeholder="Enter your username or email"
             />
           </label>
 

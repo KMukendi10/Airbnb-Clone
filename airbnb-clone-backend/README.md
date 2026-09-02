@@ -70,7 +70,93 @@ central `errorHandler` middleware, which returns a consistent
 including handling for Mongoose CastError, ValidationError, and duplicate-key errors.
 
 ## Deploying to Heroku
-1. `heroku create your-app-name`
-2. Set config vars matching your `.env`: `heroku config:set MONGO_URI=... JWT_SECRET=... CLIENT_ORIGINS=...`
-3. `git push heroku main`
-4. Confirm it's alive: `GET https://your-app-name.herokuapp.com/api/health`
+
+### Prerequisites
+- [Heroku CLI](https://devcenter.heroku.com/articles/heroku-cli) installed and logged in
+- [Git](https://git-scm.com/) installed
+
+### Backend deployment
+
+```bash
+# 1. Create the Heroku app (from the repo root or backend folder)
+heroku create your-app-name-backend
+
+# 2. Set all required environment variables
+heroku config:set MONGO_URI="mongodb+srv://..." --app your-app-name-backend
+heroku config:set JWT_SECRET="your-long-random-secret" --app your-app-name-backend
+heroku config:set JWT_EXPIRES_IN="7d" --app your-app-name-backend
+heroku config:set CLIENT_ORIGINS="https://your-frontend.herokuapp.com,https://your-admin.herokuapp.com" --app your-app-name-backend
+heroku config:set NODE_ENV="production" --app your-app-name-backend
+
+# 3. Deploy (from repo root, using a subtree push)
+git subtree push --prefix airbnb-clone-backend heroku main
+
+# 4. Confirm the API is live
+curl https://your-app-name-backend.herokuapp.com/api/health
+```
+
+The `Procfile` in `airbnb-clone-backend/` tells Heroku to run `node server.js`.
+
+### Frontend deployment (Airbnb Clone UI)
+
+```bash
+# 1. Create the Heroku app
+heroku create your-app-name-frontend
+
+# 2. Set the backend API URL
+heroku config:set VITE_API_URL="https://your-app-name-backend.herokuapp.com/api" --app your-app-name-frontend
+
+# 3. Add the Node.js buildpack
+heroku buildpacks:set heroku/nodejs --app your-app-name-frontend
+
+# 4. Deploy
+git subtree push --prefix airbnb-clone-frontend heroku-frontend main
+```
+
+### Admin Dashboard deployment
+
+```bash
+# 1. Create the Heroku app
+heroku create your-app-name-admin
+
+# 2. Set the backend API URL
+heroku config:set VITE_API_URL="https://your-app-name-backend.herokuapp.com/api" --app your-app-name-admin
+
+# 3. Add the Node.js buildpack
+heroku buildpacks:set heroku/nodejs --app your-app-name-admin
+
+# 4. Deploy
+git subtree push --prefix airbnb-clone-admin heroku-admin main
+```
+
+### Environment variable summary
+
+| Variable | Used by | Description |
+|---|---|---|
+| `MONGO_URI` | Backend | MongoDB Atlas connection string |
+| `JWT_SECRET` | Backend | Secret key for signing JWTs |
+| `JWT_EXPIRES_IN` | Backend | Token lifetime (e.g. `7d`) |
+| `PORT` | Backend | Port — set automatically by Heroku |
+| `CLIENT_ORIGINS` | Backend | Comma-separated allowed frontend origins |
+| `VITE_API_URL` | Frontend / Admin | Full URL of the backend API (no trailing slash) |
+
+### Seeding the database after deploy
+
+```bash
+heroku run node seed/seed.js --app your-app-name-backend
+```
+
+This creates the sample users and listings. After seeding:
+- **Host login:** `JaneDoe` / `password321`
+- **Guest login:** `JohnDoe` / `password123`
+
+### Verifying the deployment
+
+```bash
+# Health check
+curl https://your-app-name-backend.herokuapp.com/api/health
+
+# List accommodations
+curl https://your-app-name-backend.herokuapp.com/api/accommodations
+```
+
