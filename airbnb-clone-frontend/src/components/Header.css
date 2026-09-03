@@ -115,6 +115,26 @@
   box-shadow: var(--shadow-elevated);
 }
 
+/* ── Collapsed pill: plain "Start your search" trigger, per Figma ── */
+.search-pill--collapsed {
+  width: 100%;
+  padding: 4px 4px 4px 24px;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.search-pill--collapsed:hover {
+  box-shadow: var(--shadow-elevated);
+}
+
+.search-pill--collapsed-label {
+  font-size: var(--font-size-base);
+  font-weight: 500;
+  color: var(--color-text);
+}
+
 .search-segment {
   display: flex;
   flex-direction: column;

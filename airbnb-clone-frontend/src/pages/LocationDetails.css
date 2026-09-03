@@ -275,13 +275,12 @@
   flex-shrink: 0;
 }
 
-/* ── Review cards ── */
+/* ── Review cards (side by side, per Figma) ── */
 .reviews-list {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px 40px;
   margin-top: 24px;
-  max-width: 640px;
 }
 
 .review-card__header {
@@ -667,5 +666,444 @@
   .calc-date-label:first-child {
     border-right: none;
     border-bottom: 1px solid var(--color-border);
+  }
+}
+
+/* ════════════════════════════════════════════════════════════
+   Heading actions (Share / Save)
+   ════════════════════════════════════════════════════════════ */
+.details-heading__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.details-heading__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.details-action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: underline;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background var(--transition-fast);
+}
+
+.details-action-btn:hover {
+  background: var(--color-bg-alt);
+}
+
+/* ════════════════════════════════════════════════════════════
+   Gallery "Show all photos" + lightbox
+   ════════════════════════════════════════════════════════════ */
+.details-gallery {
+  position: relative;
+}
+
+.gallery-show-all-btn {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: #fff;
+  border: 1px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+}
+
+.gallery-show-all-btn:hover {
+  background: var(--color-bg-alt);
+}
+
+.photo-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 500;
+  background: #fff;
+  overflow-y: auto;
+  padding: 24px;
+}
+
+.photo-lightbox__close {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  font-size: var(--font-size-base);
+  font-weight: 600;
+  color: var(--color-text);
+  cursor: pointer;
+  padding: 10px;
+  margin-bottom: 16px;
+}
+
+.photo-lightbox__close:hover {
+  text-decoration: underline;
+}
+
+.photo-lightbox__grid {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.photo-lightbox__grid img {
+  width: 100%;
+  border-radius: var(--radius-md);
+  display: block;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Where you'll sleep — single photo card
+   ════════════════════════════════════════════════════════════ */
+.sleep-photo-card {
+  max-width: 280px;
+}
+
+.sleep-photo-card__img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  margin-bottom: 12px;
+}
+
+.sleep-photo-card__name {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.sleep-photo-card__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Amenities "Show all" button
+   ════════════════════════════════════════════════════════════ */
+.amenities-show-all-btn {
+  margin-top: 20px;
+  padding: 12px 20px;
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+  background: none;
+  border: 1px solid var(--color-text);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.amenities-show-all-btn:hover {
+  background: var(--color-bg-alt);
+}
+
+/* ════════════════════════════════════════════════════════════
+   Calendar (2-month date-range picker)
+   ════════════════════════════════════════════════════════════ */
+.calendar-subtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: -8px;
+  margin-bottom: 20px;
+}
+
+.calendar-wrap {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.calendar-nav {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+  background: #fff;
+  font-size: 16px;
+  color: var(--color-text);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.calendar-nav:hover {
+  background: var(--color-bg-alt);
+}
+
+.calendar-months {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  min-width: 0;
+}
+
+.cal-month__label {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.cal-weekdays {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 4px;
+}
+
+.cal-weekday {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  text-align: center;
+  font-weight: 600;
+}
+
+.cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  row-gap: 2px;
+}
+
+.cal-day {
+  aspect-ratio: 1;
+  border: none;
+  background: none;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  cursor: pointer;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.cal-day--empty {
+  cursor: default;
+}
+
+.cal-day:not(.cal-day--disabled):not(.cal-day--empty):hover {
+  background: var(--color-bg-alt);
+}
+
+.cal-day--disabled {
+  color: var(--color-text-muted);
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.cal-day--in-range {
+  background: var(--color-bg-alt);
+  border-radius: 0;
+}
+
+.cal-day--selected {
+  background: var(--color-text);
+  color: #fff;
+  font-weight: 700;
+}
+
+.calendar-clear-btn {
+  margin-top: 16px;
+  background: none;
+  border: none;
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 4px;
+}
+
+/* ════════════════════════════════════════════════════════════
+   Host card
+   ════════════════════════════════════════════════════════════ */
+.host-card {
+  max-width: 460px;
+}
+
+.host-card__top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.host-card__avatar {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  flex-shrink: 0;
+  text-transform: uppercase;
+}
+
+.host-card__name {
+  font-size: var(--font-size-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.host-card__joined {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
+.host-card__badges {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.host-card__title {
+  font-size: var(--font-size-base);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: 6px;
+}
+
+.host-card__desc {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.host-card__stat {
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  margin-bottom: 4px;
+}
+
+.host-card__contact-btn {
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.host-card__safety {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  line-height: 1.5;
+  padding: 12px;
+  background: var(--color-bg-alt);
+  border-radius: var(--radius-sm);
+}
+
+/* ════════════════════════════════════════════════════════════
+   Explore other options / Unique stays + breadcrumb
+   ════════════════════════════════════════════════════════════ */
+.explore-section__subtitle {
+  margin-top: 32px;
+}
+
+.explore-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px 20px;
+}
+
+.explore-link {
+  background: none;
+  border: none;
+  padding: 4px 0;
+  font-size: var(--font-size-sm);
+  color: var(--color-text);
+  text-align: left;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.explore-link:hover {
+  color: var(--color-text-muted);
+}
+
+.explore-link--static {
+  cursor: default;
+  text-decoration: none;
+  color: var(--color-text-muted);
+}
+
+.details-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+.details-breadcrumb a {
+  color: var(--color-text-muted);
+  text-decoration: underline;
+}
+
+.details-breadcrumb a:hover {
+  color: var(--color-text);
+}
+
+/* ════════════════════════════════════════════════════════════
+   Responsive
+   ════════════════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .reviews-list {
+    grid-template-columns: 1fr;
+  }
+
+  .calendar-months {
+    grid-template-columns: 1fr;
+  }
+
+  .cal-month:last-child {
+    display: none;
+  }
+
+  .explore-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }

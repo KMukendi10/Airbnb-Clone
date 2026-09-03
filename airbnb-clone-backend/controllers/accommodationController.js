@@ -67,9 +67,10 @@ const getAccommodations = asyncHandler(async (req, res) => {
 // @route   GET /api/accommodations/:id
 // @access  Public
 const getAccommodationById = asyncHandler(async (req, res) => {
-  // Populate host with username so the frontend can display "Hosted by X"
+  // Populate host with username + createdAt so the frontend can display
+  // "Hosted by X" and a "Joined <month year>" line on the host card
   const accommodation = await Accommodation.findById(req.params.id)
-    .populate('host', 'username');
+    .populate('host', 'username createdAt');
 
   if (!accommodation) {
     res.status(404);
