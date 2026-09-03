@@ -205,9 +205,7 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
 
       {/* ── Form header ── */}
       <div className="lf-header">
-        <div className="lf-header__icon" aria-hidden="true">
-          {isEdit ? '✏️' : '🏠'}
-        </div>
+        
         <div>
           <h1 className="lf-header__title">
             {isEdit ? 'Update Listing' : 'Create a New Listing'}
