@@ -10,7 +10,8 @@
  *   6. Description   – textarea
  */
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { resolveImageUrl } from '../api/client';
 import './ListingForm.css';
 
 const EMPTY_FORM = {
@@ -42,11 +43,36 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
   const [form, setForm] = useState({ ...EMPTY_FORM, ...initialValues });
   const [amenityInput, setAmenityInput] = useState('');
   const [amenities, setAmenities] = useState(initialValues?.amenities ?? []);
-  const [imageInput, setImageInput] = useState('');
-  const [images, setImages] = useState(initialValues?.images ?? []);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+
+  // ── Photos ──────────────────────────────────────────────
+  // Each photo is either { kind: 'url', value } (an existing/pasted image URL)
+  // or { kind: 'file', file, previewUrl } (a file picked from the device,
+  // uploaded via multipart/form-data on submit and stored on disk server-side).
+  const [imageInput, setImageInput] = useState('');
+  const [photos, setPhotos] = useState(
+    (initialValues?.images ?? []).map((value) => ({ kind: 'url', value }))
+  );
+  const fileInputRef = useRef(null);
+
+  // Keep a ref in sync with the latest photos so the unmount cleanup below
+  // (which only runs once) can still see whatever was picked during the session.
+  const photosRef = useRef(photos);
+  useEffect(() => {
+    photosRef.current = photos;
+  }, [photos]);
+
+  // Revoke object URLs for any locally-picked files when the form unmounts,
+  // so we don't leak memory.
+  useEffect(() => {
+    return () => {
+      photosRef.current.forEach((p) => {
+        if (p.kind === 'file' && p.previewUrl) URL.revokeObjectURL(p.previewUrl);
+      });
+    };
+  }, []);
 
   function set(field, value) {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -66,16 +92,40 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
     setAmenities((prev) => prev.filter((_, idx) => idx !== i));
   }
 
-  /* ── Images ── */
+  /* ── Photos: add by URL ── */
   function addImage() {
     const v = imageInput.trim();
     if (!v) return;
-    setImages((prev) => [...prev, v]);
+    setPhotos((prev) => [...prev, { kind: 'url', value: v }]);
     setImageInput('');
+    if (errors.images) setErrors((e) => ({ ...e, images: undefined }));
+  }
+
+  /* ── Photos: upload from device ── */
+  function handleFilesSelected(e) {
+    const files = Array.from(e.target.files || []);
+    if (files.length === 0) return;
+
+    const next = files.map((file) => ({
+      kind: 'file',
+      file,
+      previewUrl: URL.createObjectURL(file),
+    }));
+    setPhotos((prev) => [...prev, ...next]);
+    if (errors.images) setErrors((e) => ({ ...e, images: undefined }));
+
+    // Reset the input so selecting the same file again still fires onChange
+    e.target.value = '';
   }
 
   function removeImage(i) {
-    setImages((prev) => prev.filter((_, idx) => idx !== i));
+    setPhotos((prev) => {
+      const target = prev[i];
+      if (target?.kind === 'file' && target.previewUrl) {
+        URL.revokeObjectURL(target.previewUrl);
+      }
+      return prev.filter((_, idx) => idx !== i);
+    });
   }
 
   /* ── Validation ── */
@@ -89,7 +139,7 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
     if (Number(form.bedrooms) < 0) e.bedrooms    = 'Cannot be negative.';
     if (Number(form.bathrooms) < 0) e.bathrooms  = 'Cannot be negative.';
     if (Number(form.guests) < 1)   e.guests      = 'At least 1 guest.';
-    if (images.length === 0)       e.images      = 'Add at least one image URL.';
+    if (photos.length === 0)       e.images      = 'Add at least one photo (upload or URL).';
     setErrors(e);
     return Object.keys(e).length === 0;
   }
@@ -100,23 +150,47 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
     setSubmitError('');
     if (!validate()) return;
 
+    const fields = {
+      title: form.title,
+      location: form.location,
+      type: form.type,
+      description: form.description,
+      bedrooms: Number(form.bedrooms),
+      bathrooms: Number(form.bathrooms),
+      guests: Number(form.guests),
+      price: Number(form.price),
+      weeklyDiscount: Number(form.weeklyDiscount) || 0,
+      cleaningFee: Number(form.cleaningFee) || 0,
+      serviceFee: Number(form.serviceFee) || 0,
+      occupancyTaxes: Number(form.occupancyTaxes) || 0,
+      freeCancellation: !!form.freeCancellation,
+      instantBook: !!form.instantBook,
+    };
+
+    const existingImages = photos.filter((p) => p.kind === 'url').map((p) => p.value);
+    const filesToUpload = photos.filter((p) => p.kind === 'file').map((p) => p.file);
+
     setSubmitting(true);
     try {
-      await onSubmit({
-        ...form,
-        bedrooms:      Number(form.bedrooms),
-        bathrooms:     Number(form.bathrooms),
-        guests:        Number(form.guests),
-        price:         Number(form.price),
-        weeklyDiscount: Number(form.weeklyDiscount) || 0,
-        cleaningFee:   Number(form.cleaningFee)    || 0,
-        serviceFee:    Number(form.serviceFee)     || 0,
-        occupancyTaxes: Number(form.occupancyTaxes) || 0,
-        freeCancellation: !!form.freeCancellation,
-        instantBook:      !!form.instantBook,
-        amenities,
-        images,
-      });
+      if (filesToUpload.length > 0) {
+        // Real file upload: send multipart/form-data so Multer on the
+        // backend can write the files to disk and return their URLs.
+        const fd = new FormData();
+        Object.entries(fields).forEach(([key, value]) => fd.append(key, value));
+        amenities.forEach((a) => fd.append('amenities', a));
+        fd.append('existingImages', JSON.stringify(existingImages));
+        filesToUpload.forEach((file) => fd.append('images', file));
+
+        await onSubmit(fd);
+      } else {
+        // No new files picked — plain JSON is simpler and avoids an
+        // unnecessary multipart request when photos are all URLs.
+        await onSubmit({
+          ...fields,
+          amenities,
+          images: existingImages,
+        });
+      }
     } catch (err) {
       setSubmitError(err.message);
     } finally {
@@ -376,9 +450,36 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
           Photos
         </h2>
         <p className="lf-section__desc">
-          Add image URLs for your property. The first image will be the cover photo.
+          Upload photos from your device, or add an image URL. The first photo will be the cover photo.
         </p>
 
+        {/* Upload from device */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/jpeg,image/jpg,image/png,image/webp,image/gif"
+          multiple
+          className="lf-file-input"
+          onChange={handleFilesSelected}
+          aria-label="Upload photos from your device"
+        />
+        <button
+          type="button"
+          className="lf-upload-btn"
+          onClick={() => fileInputRef.current?.click()}
+        >
+          <svg viewBox="0 0 24 24" aria-hidden="true" className="lf-upload-btn__icon">
+            <path
+              d="M12 3a1 1 0 0 1 1 1v10.59l2.3-2.3a1 1 0 1 1 1.4 1.42l-4 4a1 1 0 0 1-1.4 0l-4-4a1 1 0 1 1 1.4-1.42l2.3 2.3V4a1 1 0 0 1 1-1zM5 18a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v2a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-2a1 1 0 0 1 1-1z"
+              fill="currentColor"
+            />
+          </svg>
+          Upload photos from device
+        </button>
+
+        <p className="lf-or-divider">or add by URL</p>
+
+        {/* Or add by URL */}
         <div className="lf-chip-add">
           <input
             className="lf-input"
@@ -395,12 +496,17 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
         </div>
         {errors.images && <p className="lf-error">{errors.images}</p>}
 
-        {images.length > 0 && (
+        {photos.length > 0 && (
           <div className="lf-photo-grid">
-            {images.map((img, i) => (
+            {photos.map((p, i) => (
               <div key={i} className="lf-photo-thumb">
-                <img src={img} alt={`Photo ${i + 1}`} loading="lazy" />
+                <img
+                  src={p.kind === 'file' ? p.previewUrl : resolveImageUrl(p.value)}
+                  alt={`Photo ${i + 1}`}
+                  loading="lazy"
+                />
                 {i === 0 && <span className="lf-photo-cover">Cover</span>}
+                {p.kind === 'file' && <span className="lf-photo-uploading">Will upload</span>}
                 <button
                   type="button"
                   className="lf-photo-remove"

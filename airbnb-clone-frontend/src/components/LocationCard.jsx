@@ -6,6 +6,7 @@
  */
 
 import { Link } from 'react-router-dom';
+import { resolveImageUrl } from '../api/client';
 import './LocationCard.css';
 
 // Fallback placeholder when no image URL is provided
@@ -27,7 +28,7 @@ export default function LocationCard({ listing }) {
     images = [],
   } = listing;
 
-  const image = images[0] || PLACEHOLDER;
+  const image = resolveImageUrl(images[0]) || PLACEHOLDER;
   const displayAmenities = amenities.slice(0, 3).join(' · ');
   const hasRating = rating > 0;
 

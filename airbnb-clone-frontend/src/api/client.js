@@ -15,6 +15,22 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// The backend serves uploaded photos as relative paths (e.g. "/uploads/167...jpg")
+// from its own origin, not from the /api prefix. Strip "/api" off BASE_URL to get
+// the origin, so <img> tags can resolve those paths regardless of environment.
+const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, '');
+
+/**
+ * Resolves an accommodation image path to a fully-qualified URL.
+ * Absolute URLs pass through unchanged; relative paths returned by the
+ * backend (from a real file upload) are prefixed with the API's origin.
+ */
+export function resolveImageUrl(src) {
+  if (!src) return src;
+  if (/^(https?:|blob:|data:)/i.test(src)) return src;
+  return `${API_ORIGIN}${src.startsWith('/') ? '' : '/'}${src}`;
+}
+
 /**
  * @param {string} path - API path, e.g. '/accommodations' (must start with /)
  * @param {{ method?: string, body?: object, token?: string }} [options]

@@ -198,8 +198,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  width: 35px;
+  height: 35px;
   border-radius: var(--radius-full);
   background: var(--color-primary);
   color: #fff;
@@ -214,9 +214,7 @@
 
 .search-btn svg { width: 14px; height: 14px; }
 
-/* ── Summary pill (results-page nav bar) ──────────────────────
-   Single-line segments: "Bordeaux | Feb 19-26 | 2 guests" + pink
-   round search button, matching the Figma results-page header. */
+/* ── Summary pill (results-page nav bar) ────────────────────── */
 .search-pill--summary {
   height: 44px;
   padding-left: 4px;
@@ -475,9 +473,9 @@
   margin: 6px 0;
 }
 
-/* ════════════════════════════════════════
-   HERO SEARCH BAR (transparent mode)
-════════════════════════════════════════ */
+/* ══════════════════
+   HERO SEARCH BAR
+═════════════════════ */
 .header-hero-search-wrap {
   display: flex;
   justify-content: center;
@@ -519,7 +517,7 @@
 
 .hero-segment:hover {
   background: var(--color-bg-alt);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-full);
 }
 
 .hero-segment--where { flex: 1.5; }
@@ -609,17 +607,17 @@
 .hero-guest-counter {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   margin-top: 4px;
 }
 
 .hero-guest-btn {
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
-  border: 1.5px solid var(--color-border-dark);
+  border: 1px solid var(--color-border-dark);
   background: none;
-  font-size: 16px;
+  font-size: 13px;
   line-height: 1;
   color: var(--color-text);
   cursor: pointer;
@@ -642,7 +640,7 @@
 }
 
 .hero-guest-count {
-  font-size: 13px;
+  font-size: 10px;
   font-weight: 600;
   min-width: 18px;
   text-align: center;
@@ -660,13 +658,12 @@
 .hero-search-btn {
   display: flex;
   align-items: center;
-  gap: 8px;
   background: var(--color-primary);
   color: #fff;
   border: none;
   border-radius: var(--radius-full);
-  padding: 0 20px;
-  height: 44px;
+  padding: 0 13px;
+  height: 40px;
   margin-right: 6px;
   font-size: var(--font-size-sm);
   font-weight: 700;

@@ -12,7 +12,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Header from '../components/Header';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../api/client';
+import { api, resolveImageUrl } from '../api/client';
 import './Listings.css';
 
 const PLACEHOLDER =
@@ -104,7 +104,7 @@ export default function Listings() {
                   <div className="listing-row__left">
                     <div className="listing-row__img-wrap">
                       <img
-                        src={listing.images?.[0] || PLACEHOLDER}
+                        src={resolveImageUrl(listing.images?.[0]) || PLACEHOLDER}
                         alt={listing.title}
                         className="listing-row__img"
                         loading="lazy"

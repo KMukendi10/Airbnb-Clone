@@ -18,7 +18,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
-import { api } from '../api/client';
+import { api, resolveImageUrl } from '../api/client';
 import './LocationDetails.css';
 
 // ── Amenity icons (simple emoji fallback map) ──────────────
@@ -308,8 +308,11 @@ export default function LocationDetails() {
     );
   }
 
-  // Build gallery images
-  const images = listing.images?.length ? listing.images : [PLACEHOLDER];
+  // Build gallery images (resolved to full URLs so uploaded photos, which are
+  // stored as relative paths, render correctly)
+  const images = listing.images?.length
+    ? listing.images.map(resolveImageUrl)
+    : [PLACEHOLDER];
   const [mainImage, ...restImages] = images;
 
   const visibleAmenities = showAllAmenities

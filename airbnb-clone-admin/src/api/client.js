@@ -9,19 +9,40 @@
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
+// The backend serves uploaded photos as relative paths (e.g. "/uploads/167...jpg")
+// from its own origin, not from the /api prefix. Strip "/api" off BASE_URL to get
+// the origin, so <img> tags can resolve those paths regardless of environment.
+const API_ORIGIN = BASE_URL.replace(/\/api\/?$/, '');
+
+/**
+ * Resolves an accommodation image path to a fully-qualified URL.
+ * - Absolute URLs (http/https), blob: previews, and data: URIs pass through unchanged.
+ * - Relative paths returned by the backend (from a real file upload) are
+ *   prefixed with the API's origin.
+ */
+export function resolveImageUrl(src) {
+  if (!src) return src;
+  if (/^(https?:|blob:|data:)/i.test(src)) return src;
+  return `${API_ORIGIN}${src.startsWith('/') ? '' : '/'}${src}`;
+}
+
 /**
  * @param {string} path
- * @param {{ method?: string, body?: object, token?: string }} [options]
+ * @param {{ method?: string, body?: object|FormData, token?: string }} [options]
  * @returns {Promise<any>}
  */
 async function request(path, { method = 'GET', body, token } = {}) {
-  const headers = { 'Content-Type': 'application/json' };
+  const isFormData = typeof FormData !== 'undefined' && body instanceof FormData;
+
+  const headers = {};
+  // Let the browser set Content-Type (incl. multipart boundary) for FormData.
+  if (!isFormData) headers['Content-Type'] = 'application/json';
   if (token) headers.Authorization = `Bearer ${token}`;
 
   const res = await fetch(`${BASE_URL}${path}`, {
     method,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: isFormData ? body : body ? JSON.stringify(body) : undefined,
   });
 
   const data = await res.json().catch(() => ({}));

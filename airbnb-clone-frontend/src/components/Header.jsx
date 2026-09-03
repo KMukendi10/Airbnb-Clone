@@ -478,7 +478,7 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
 
               {/* GUESTS */}
               <div className="hero-segment hero-segment--guests">
-                <span className="hero-segment-label">Add guests</span>
+                <span className="hero-segment-label">Guests</span>
                 <div className="hero-guest-counter" role="group" aria-label="Number of guests">
                   <button
                     type="button"
@@ -503,7 +503,7 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
                 <svg viewBox="0 0 32 32" aria-hidden="true" focusable="false">
                   <path d="M13 24a11 11 0 1 1 0-22 11 11 0 0 1 0 22zm16.293 3.293-5.647-5.647a13 13 0 1 0-1.414 1.414l5.647 5.647a1 1 0 0 0 1.414-1.414z" fill="currentColor" />
                 </svg>
-                <span>Search</span>
+                <span></span>
               </button>
             </div>
           </form>
