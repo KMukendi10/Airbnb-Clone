@@ -47,6 +47,8 @@ const NAV_TABS = ['Places to stay', 'Experiences', 'Online Experiences'];
 export default function Header({ onFilter, transparent = false, defaultLocation = '' }) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+
+  const ADMIN_URL = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174';
   const dropdownRef = useRef(null);
 
   // Profile dropdown
@@ -324,12 +326,13 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
         {/* ── Right: Become a host + profile ── */}
         <nav className="header-right" aria-label="User navigation">
           {!user && (
-            <Link
-              to="/login"
+            <a
+              href={`${ADMIN_URL}/login`}
               className={`header-host-link${isWhite ? ' header-host-link--white' : ''}`}
             >
               Become a host
-            </Link>
+            </a>
+
           )}
           {user && (
             <span className={`header-welcome${isWhite ? ' header-welcome--white' : ''}`}>
@@ -389,7 +392,7 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
                     <Link to="/login" className="dropdown-item dropdown-item--bold" role="menuitem" onClick={() => setMenuOpen(false)}>Log in</Link>
                     <Link to="/login" className="dropdown-item" role="menuitem" onClick={() => setMenuOpen(false)}>Sign up</Link>
                     <hr className="dropdown-divider" />
-                    <Link to="/login" className="dropdown-item" role="menuitem" onClick={() => setMenuOpen(false)}>Airbnb your home</Link>
+                    <a href={`${ADMIN_URL}/login`} className="dropdown-item" role="menuitem" onClick={() => setMenuOpen(false)}>Airbnb your home</a>
                     <Link to="/login" className="dropdown-item" role="menuitem" onClick={() => setMenuOpen(false)}>Help Centre</Link>
                   </>
                 )}
