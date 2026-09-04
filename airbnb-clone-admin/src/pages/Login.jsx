@@ -6,6 +6,8 @@ import './Login.css';
 export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
+  const CLIENT_URL = import.meta.env.VITE_CLIENT_URL || 'http://localhost:5173';
+
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -77,6 +79,12 @@ export default function Login() {
           <p className="admin-login-hint">
             💡 Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
           </p>
+
+          <div className="admin-login-guest-link-wrapper">
+            <a href={CLIENT_URL} className="admin-login-guest-link">
+              ← Continue as a guest
+            </a>
+          </div>
         </div>
       </form>
     </div>

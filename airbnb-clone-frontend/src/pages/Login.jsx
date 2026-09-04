@@ -17,6 +17,7 @@ import './Login.css';
 export default function Login() {
   const navigate = useNavigate();
   const { login } = useAuth();
+  const ADMIN_URL = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174';
 
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [username, setUsername] = useState('');
@@ -185,6 +186,18 @@ export default function Login() {
               : 'Sign up'}
           </button>
         </form>
+
+        {/* Host login */}
+        <div className="login-switch-site">
+          <p>Are you a host?</p>
+
+          <a
+            href={`${ADMIN_URL}/login`}
+            className="login-host-link"
+          >
+            Log in as a host
+          </a>
+        </div>
 
         {/* Divider */}
         <div className="login-divider" aria-hidden="true">
