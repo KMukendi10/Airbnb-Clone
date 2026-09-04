@@ -76,15 +76,16 @@ export default function Login() {
             {submitting ? 'Logging in…' : 'Log in'}
           </button>
 
-          <p className="admin-login-hint">
-            💡 Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
-          </p>
-
           <div className="admin-login-guest-link-wrapper">
             <a href={CLIENT_URL} className="admin-login-guest-link">
               ← Continue as a guest
             </a>
           </div>
+          
+          <p className="admin-login-hint">
+            💡 Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
+          </p>
+
         </div>
       </form>
     </div>
