@@ -43,6 +43,16 @@ const HOTEL_TYPES = [
 ];
 
 const NAV_TABS = ['Places to stay', 'Experiences', 'Online Experiences'];
+const LANGUAGES = ['English (ZA)', 'isiZulu', 'Afrikaans', 'Xitsonga'];
+
+function GlobeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M3 12h18M12 3c2.35 2.47 3.54 5.47 3.54 9S14.35 18.53 12 21c-2.35-2.47-3.54-5.47-3.54-9S9.65 5.47 12 3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 export default function Header({ onFilter, transparent = false, defaultLocation = '' }) {
   const { user, logout } = useAuth();
@@ -50,9 +60,12 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
 
   const ADMIN_URL = import.meta.env.VITE_ADMIN_URL || 'http://localhost:5174';
   const dropdownRef = useRef(null);
+  const languageRef = useRef(null);
 
   // Profile dropdown
   const [menuOpen, setMenuOpen] = useState(false);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const [language, setLanguage] = useState(LANGUAGES[0]);
 
   // Hero search state
   const [activeTab, setActiveTab] = useState('Places to stay');
@@ -60,7 +73,8 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
   const [whereValue, setWhereValue] = useState('');
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState(1);
+  const [adults, setAdults] = useState(1);
+  const [children, setChildren] = useState(0);
   const whereRef = useRef(null);
 
   // Compact search (standard header)
@@ -96,6 +110,14 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
     return () => document.removeEventListener('mousedown', handleOutside);
   }, []);
 
+  useEffect(() => {
+    function handleOutside(e) {
+      if (languageRef.current && !languageRef.current.contains(e.target)) setLanguageOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
+
   // Close where dropdown on outside click
   useEffect(() => {
     function handleOutside(e) {
@@ -122,14 +144,14 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
   useEffect(() => {
     function handleOutside(e) {
       if (compactSearchRef.current && !compactSearchRef.current.contains(e.target)) {
-        if (!locationInput && !checkIn && !checkOut && guests === 1) {
+        if (!locationInput && !checkIn && !checkOut && adults === 1 && children === 0) {
           setSearchExpanded(false);
         }
       }
     }
     document.addEventListener('mousedown', handleOutside);
     return () => document.removeEventListener('mousedown', handleOutside);
-  }, [locationInput, checkIn, checkOut, guests]);
+  }, [locationInput, checkIn, checkOut, adults, children]);
 
   // Format a yyyy-mm-dd string as "Feb 19"
   function formatShortDate(value) {
@@ -150,7 +172,31 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
       : `${formatShortDate(checkIn)} – ${formatShortDate(checkOut)}`;
   })();
 
-  const guestsLabel = `${guests} guest${guests !== 1 ? 's' : ''}`;
+  const totalGuests = adults + children;
+  const guestsLabel = `${totalGuests} guest${totalGuests !== 1 ? 's' : ''}`;
+
+  function selectLanguage(option) {
+    setLanguage(option);
+    setLanguageOpen(false);
+  }
+
+  function renderGuestRows() {
+    const rows = [
+      { label: 'Adults', description: 'Ages 13 or above', count: adults, setCount: setAdults, min: 1 },
+      { label: 'Children', description: 'Ages 2–12', count: children, setCount: setChildren, min: 0 },
+    ];
+
+    return rows.map(({ label, description, count, setCount, min }) => (
+      <div className="guest-picker-row" key={label}>
+        <span><strong>{label}</strong><small>{description}</small></span>
+        <div className="hero-guest-counter">
+          <button type="button" className="hero-guest-btn" onClick={() => setCount((value) => Math.max(min, value - 1))} aria-label={`Remove ${label.toLowerCase()}`} disabled={count <= min}>−</button>
+          <span className="hero-guest-count" aria-live="polite">{count}</span>
+          <button type="button" className="hero-guest-btn" onClick={() => setCount((value) => Math.min(16, value + 1))} aria-label={`Add ${label.toLowerCase()}`} disabled={count >= 16}>+</button>
+        </div>
+      </div>
+    ));
+  }
 
   function handleHeroSearch(e) {
     e.preventDefault();
@@ -195,7 +241,10 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
               <button
                 key={tab}
                 className={`header-nav-tab${activeTab === tab ? ' header-nav-tab--active' : ''}`}
-                onClick={() => setActiveTab(tab)}
+                onClick={() => {
+                  setActiveTab(tab);
+                  navigate('/locations');
+                }}
               >
                 {tab}
               </button>
@@ -292,24 +341,7 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
                 </button>
                 {guestsOpen && (
                   <div className="search-popover search-popover--guests" role="dialog" aria-label="Select number of guests">
-                    <span className="search-popover-label">Guests</span>
-                    <div className="hero-guest-counter">
-                      <button
-                        type="button"
-                        className="hero-guest-btn"
-                        onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                        aria-label="Remove guest"
-                        disabled={guests <= 1}
-                      >−</button>
-                      <span className="hero-guest-count" aria-live="polite">{guests}</span>
-                      <button
-                        type="button"
-                        className="hero-guest-btn"
-                        onClick={() => setGuests((g) => Math.min(16, g + 1))}
-                        aria-label="Add guest"
-                        disabled={guests >= 16}
-                      >+</button>
-                    </div>
+                    {renderGuestRows()}
                   </div>
                 )}
               </div>
@@ -340,15 +372,26 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
             </span>
           )}
 
-          <button
-            className={`header-globe${isWhite ? ' header-globe--white' : ''}`}
-            aria-label="Language"
-            title="Language"
-          >
-            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-              <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.8 8.4A6.3 6.3 0 0 0 7 9.9v.6a5.3 5.3 0 0 1-5.2-2.1zm.4-1.1C3 5.5 5 4.2 7 4v1.7A7.7 7.7 0 0 1 2.2 7.3zm5.6 7.9A6.3 6.3 0 0 1 1.7 9.6h.1c.5.5 1.2.9 2 1.1v.5a1 1 0 0 0 1 1h2.6a1 1 0 0 0 .4-.1zM9 14.1V13a1 1 0 0 0-1-1H6.5v-.5c1-.2 1.8-.7 2.5-1.4V14l-.1.1zM9 7.3V4c2 .2 4 1.5 4.8 3.3A7.7 7.7 0 0 1 9 7.3zm0 1a7.7 7.7 0 0 0 4.8.2A6.3 6.3 0 0 1 9 9.9v-.6z" fill="currentColor" />
-            </svg>
-          </button>
+          <div className="header-language" ref={languageRef}>
+            <button
+              type="button"
+              className={`header-globe${isWhite ? ' header-globe--white' : ''}`}
+              onClick={() => setLanguageOpen((open) => !open)}
+              aria-label={`Change language, currently ${language}`}
+              aria-expanded={languageOpen}
+              aria-haspopup="menu"
+              title="Change language"
+            ><GlobeIcon /></button>
+            {languageOpen && (
+              <div className="language-menu" role="menu" aria-label="Choose a language">
+                {LANGUAGES.map((option) => (
+                  <button key={option} type="button" role="menuitemradio" aria-checked={language === option} className={`language-menu__item${language === option ? ' language-menu__item--active' : ''}`} onClick={() => selectLanguage(option)}>
+                    {option}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           <div className="header-profile" ref={dropdownRef}>
             <button
@@ -480,25 +523,12 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
               <span className="hero-divider" aria-hidden="true" />
 
               {/* GUESTS */}
-              <div className="hero-segment hero-segment--guests">
-                <span className="hero-segment-label">Guests</span>
-                <div className="hero-guest-counter" role="group" aria-label="Number of guests">
-                  <button
-                    type="button"
-                    className="hero-guest-btn"
-                    onClick={() => setGuests((g) => Math.max(1, g - 1))}
-                    aria-label="Remove guest"
-                    disabled={guests <= 1}
-                  >−</button>
-                  <span className="hero-guest-count" aria-live="polite">{guests}</span>
-                  <button
-                    type="button"
-                    className="hero-guest-btn"
-                    onClick={() => setGuests((g) => Math.min(16, g + 1))}
-                    aria-label="Add guest"
-                    disabled={guests >= 16}
-                  >+</button>
-                </div>
+              <div className="hero-segment hero-segment--guests" ref={guestsRef}>
+                <button type="button" className="hero-segment-btn" onClick={() => setGuestsOpen((open) => !open)} aria-expanded={guestsOpen} aria-haspopup="dialog">
+                  <span className="hero-segment-label">Guests</span>
+                  <span className="hero-segment-value">{guestsLabel}</span>
+                </button>
+                {guestsOpen && <div className="hero-guests-dropdown" role="dialog" aria-label="Select guests">{renderGuestRows()}</div>}
               </div>
 
               {/* SEARCH BUTTON */}

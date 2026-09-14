@@ -314,7 +314,7 @@
 }
 
 .search-popover--guests {
-  min-width: 180px;
+  min-width: 280px;
 }
 
 .search-popover-label {
@@ -382,6 +382,39 @@
 .header-globe svg { width: 16px; height: 16px; }
 .header-globe--white { color: #fff; }
 .header-globe--white:hover { background: rgba(255, 255, 255, 0.15); }
+
+.header-language { position: relative; }
+
+.language-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 400;
+  min-width: 160px;
+  padding: 8px 0;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+}
+
+.language-menu__item {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  border: 0;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+}
+
+.language-menu__item:hover,
+.language-menu__item--active { background: var(--color-bg-alt); }
+.language-menu__item--active { font-weight: 700; }
 
 /* ── Profile button ── */
 .header-profile { position: relative; }
@@ -644,6 +677,35 @@
   font-weight: 600;
   min-width: 18px;
   text-align: center;
+}
+
+.guest-picker-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+  padding: 10px 0;
+}
+
+.guest-picker-row + .guest-picker-row { border-top: 1px solid var(--color-border); }
+.guest-picker-row > span { display: flex; flex-direction: column; gap: 2px; }
+.guest-picker-row strong { font-size: 14px; color: var(--color-text); }
+.guest-picker-row small { font-size: 12px; color: var(--color-text-muted); }
+.guest-picker-row .hero-guest-counter { margin-top: 0; gap: 10px; }
+.guest-picker-row .hero-guest-btn { width: 28px; height: 28px; font-size: 17px; }
+.guest-picker-row .hero-guest-count { font-size: 14px; min-width: 20px; }
+
+.hero-guests-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 400;
+  min-width: 280px;
+  padding: 12px 18px;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-elevated);
 }
 
 /* Divider between segments */

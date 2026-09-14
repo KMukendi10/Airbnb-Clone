@@ -4,7 +4,19 @@
  * copyright + language/currency bar at the bottom.
  */
 
+import { useEffect, useRef, useState } from 'react';
 import './Footer.css';
+
+const LANGUAGES = ['English (ZA)', 'isiZulu', 'Afrikaans', 'Xitsonga'];
+
+function GlobeIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="1.8" />
+      <path d="M3 12h18M12 3c2.35 2.47 3.54 5.47 3.54 9S14.35 18.53 12 21c-2.35-2.47-3.54-5.47-3.54-9S9.65 5.47 12 3Z" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 const FOOTER_COLUMNS = [
   {
@@ -52,6 +64,17 @@ const FOOTER_COLUMNS = [
 
 export default function Footer() {
   const year = new Date().getFullYear();
+  const [language, setLanguage] = useState(LANGUAGES[0]);
+  const [languageOpen, setLanguageOpen] = useState(false);
+  const languageRef = useRef(null);
+
+  useEffect(() => {
+    function handleOutside(event) {
+      if (languageRef.current && !languageRef.current.contains(event.target)) setLanguageOpen(false);
+    }
+    document.addEventListener('mousedown', handleOutside);
+    return () => document.removeEventListener('mousedown', handleOutside);
+  }, []);
 
   return (
     <footer className="site-footer" aria-label="Site footer">
@@ -88,12 +111,21 @@ export default function Footer() {
           </p>
 
           <div className="footer-bottom__right">
-            <button className="footer-locale-btn" aria-label="Change language">
-              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false" width="14" height="14">
-                <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0zM1.8 8.4A6.3 6.3 0 0 0 7 9.9v.6a5.3 5.3 0 0 1-5.2-2.1zm.4-1.1C3 5.5 5 4.2 7 4v1.7A7.7 7.7 0 0 1 2.2 7.3zm5.6 7.9A6.3 6.3 0 0 1 1.7 9.6h.1c.5.5 1.2.9 2 1.1v.5a1 1 0 0 0 1 1h2.6a1 1 0 0 0 .4-.1zM9 14.1V13a1 1 0 0 0-1-1H6.5v-.5c1-.2 1.8-.7 2.5-1.4V14l-.1.1zM9 7.3V4c2 .2 4 1.5 4.8 3.3A7.7 7.7 0 0 1 9 7.3zm0 1a7.7 7.7 0 0 0 4.8.2A6.3 6.3 0 0 1 9 9.9v-.6z" fill="currentColor" />
-              </svg>
-              English (ZA)
-            </button>
+            <div className="footer-language" ref={languageRef}>
+              <button className="footer-locale-btn" type="button" onClick={() => setLanguageOpen((open) => !open)} aria-label={`Change language, currently ${language}`} aria-expanded={languageOpen} aria-haspopup="menu">
+                <GlobeIcon />
+                {language}
+              </button>
+              {languageOpen && (
+                <div className="footer-language-menu" role="menu" aria-label="Choose a language">
+                  {LANGUAGES.map((option) => (
+                    <button key={option} type="button" role="menuitemradio" aria-checked={language === option} className={`footer-language-menu__item${language === option ? ' footer-language-menu__item--active' : ''}`} onClick={() => { setLanguage(option); setLanguageOpen(false); }}>
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             <button className="footer-locale-btn" aria-label="Change currency">
               R&nbsp;ZAR
