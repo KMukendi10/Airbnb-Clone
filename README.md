@@ -202,6 +202,28 @@ I learned the importance of:
 
 ---
 
+### Production Performance
+
+After deploying the application to Render, I noticed that the hosted version could sometimes take longer to load than the local development version.
+
+This highlighted a difference between developing locally and running an application in a production environment. Factors such as server startup time, network latency, API requests, and database communication can affect the initial loading experience.
+
+Rather than treating the deployment as the end of the project, this gave me an opportunity to identify performance as an area for further improvement.
+
+**Potential improvements include:**
+
+* Optimising API requests
+* Reducing unnecessary requests during initial page load
+* Improving database queries
+* Adding loading states for slower requests
+* Optimising images and other frontend assets
+* Reviewing the deployment and database regions
+* Monitoring backend response times
+
+This experience helped me understand that an application can behave differently in production compared to localhost and that deployment introduces additional performance considerations.
+
+---
+
 ## Tech Stack
 
 **Frontend**
