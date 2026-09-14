@@ -70,7 +70,7 @@ export default function Reservations() {
         {/* Empty */}
         {!loading && !error && reservations.length === 0 && (
           <div className="res-empty">
-            <div className="res-empty__icon" aria-hidden="true">📭</div>
+            <div className="res-empty__icon" aria-hidden="true"></div>
             <h2 className="res-empty__title">No reservations yet</h2>
             <p className="res-empty__subtitle">
               When guests book your listings, their reservations will appear here.
