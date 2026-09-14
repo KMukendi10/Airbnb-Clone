@@ -90,7 +90,7 @@ export default function Reservations() {
         {/* Empty */}
         {!loading && !error && reservations.length === 0 && (
           <div className="reservations-empty">
-            <div className="reservations-empty__icon" aria-hidden="true">✈️</div>
+            <div className="reservations-empty__icon" aria-hidden="true"></div>
             <h2 className="reservations-empty__title">No trips booked…yet!</h2>
             <p className="reservations-empty__subtitle">
               Time to dust off your bags and start planning your next adventure.

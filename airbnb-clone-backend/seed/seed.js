@@ -171,6 +171,37 @@ const makeAccommodations = (hostId) => [
     },
     host: hostId,
   },
+  ...[
+    ['Mountain View Cabin in Hout Bay', 'Entire cabin', 'Cape Town', 2, 1, 4, 2400, 4.8, 143, 'A peaceful timber cabin tucked beneath the Twelve Apostles, with a fireplace and mountain views.', 'photo-1449158743715-0a90ebb6d2d8'],
+    ['Designer Loft in Maboneng', 'Entire loft', 'Johannesburg', 1, 1, 2, 1350, 4.6, 91, 'A sun-filled industrial loft in vibrant Maboneng, surrounded by galleries, cafes and markets.', 'photo-1522708323590-d24dbb6b0267'],
+    ['Garden Cottage in Parkhurst', 'Entire guest suite', 'Johannesburg', 1, 1, 2, 1100, 4.7, 76, 'A quiet garden cottage near Parkhurst restaurants with a private patio and work area.', 'photo-1600585154340-be6161a56a0c'],
+    ['Sea Point Apartment with Ocean Views', 'Entire apartment', 'Cape Town', 2, 2, 4, 2800, 4.9, 188, 'Enjoy sunrise ocean views from this polished Sea Point apartment near the promenade.', 'photo-1499793983690-e29da59ef1c2'],
+    ['Bushveld Safari Lodge Retreat', 'Entire villa', 'Hoedspruit', 3, 3, 6, 4200, 4.9, 121, 'A private safari lodge on the edge of the bushveld with a plunge pool and wildlife visits.', 'photo-1516426122078-c23e76319801'],
+    ['Cosy Clarens Stone Cottage', 'Entire cottage', 'Clarens', 2, 1, 4, 1750, 4.7, 109, 'A characterful stone cottage near the village square, ideal for hiking and slow mornings by the fire.', 'photo-1510798831971-661eb04b3739'],
+    ['Waterfront Penthouse in Durban', 'Entire apartment', 'Durban', 3, 2, 6, 3100, 4.8, 156, 'A spacious beachfront penthouse overlooking Durban Golden Mile with a generous balcony.', 'photo-1600607687920-4e2a09cf159d'],
+    ['Bohemian Flat in Melville', 'Entire apartment', 'Johannesburg', 1, 1, 2, 950, 4.5, 64, 'An artful and affordable flat in leafy Melville with a sunny balcony.', 'photo-1505693416388-ac5ce068fe85'],
+    ['Franschhoek Vineyard Villa', 'Entire villa', 'Franschhoek', 4, 3, 8, 5200, 5.0, 97, 'A refined Winelands villa with vineyard views, a pool and generous entertaining spaces.', 'photo-1601918774946-25832a4be0d6'],
+    ['Modern Umhlanga Beach Apartment', 'Entire apartment', 'Umhlanga', 2, 2, 4, 2600, 4.8, 132, 'A bright apartment near Umhlanga beach, lighthouse and lively village centre.', 'photo-1600566753086-00f18fb6b3ea'],
+    ['Forest Hideaway in Knysna', 'Entire house', 'Knysna', 3, 2, 6, 2900, 4.9, 115, 'Unwind among indigenous trees in this serene Knysna home near lagoon cruises and forest trails.', 'photo-1518780664697-55e3ad937233'],
+    ['City Bowl Heritage Townhouse', 'Entire townhouse', 'Cape Town', 3, 2, 5, 3300, 4.7, 84, 'A restored City Bowl townhouse with Table Mountain views and cafes just outside the door.', 'photo-1600047509807-ba8f99d2cdde'],
+    ['Drakensberg Eco Cabin', 'Entire cabin', 'Underberg', 2, 1, 4, 1900, 4.8, 72, 'Disconnect in a low-impact cabin surrounded by Drakensberg scenery, trails and open skies.', 'photo-1542718610-a1d656d1884c'],
+    ['Trendy Studio in Pretoria East', 'Entire studio', 'Pretoria', 1, 1, 2, 900, 4.5, 58, 'A compact, stylish studio near business hubs and restaurants for comfortable stays.', 'photo-1536376072261-38c75010e6c9'],
+    ['Ballito Family Beach House', 'Entire house', 'Ballito', 4, 3, 8, 4600, 4.9, 147, 'A relaxed family beach house with pool, sea views and easy beach access.', 'photo-1494526585095-c41746248156'],
+    ['Historic Karoo Farm Stay', 'Farm stay', 'Prince Albert', 2, 1, 4, 1500, 4.7, 69, 'Slow down on a working Karoo farm with wide-open views, stargazing and country hospitality.', 'photo-1500534623283-312aade485b7'],
+  ].map(([title, type, location, bedrooms, bathrooms, guests, price, rating, reviews, description, photo], index) => ({
+    title, type, location, bedrooms, bathrooms, guests, price, rating, reviews, description,
+    amenities: ['Wifi', 'Kitchen', 'Free parking', 'Workspace', 'TV', 'Air conditioning'],
+    images: [`https://images.unsplash.com/${photo}?w=800&q=80`],
+    weeklyDiscount: index % 3 === 0 ? 10 : 5,
+    cleaningFee: Math.round(price * 0.15), serviceFee: Math.round(price * 0.12), occupancyTaxes: Math.round(price * 0.08),
+    enhancedCleaning: index % 2 === 0, selfCheckIn: index % 3 !== 0,
+    freeCancellation: index % 2 === 0, instantBook: index % 3 === 0,
+    specificRatings: {
+      cleanliness: Math.min(5, rating + 0.1), communication: rating, checkIn: rating,
+      accuracy: rating, location: Math.min(5, rating + 0.1), value: rating,
+    },
+    host: hostId,
+  })),
 ];
 
 // ── Runner ─────────────────────────────────────────────────

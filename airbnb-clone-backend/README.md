@@ -27,7 +27,7 @@ server.js
    - `MONGO_URI` — your MongoDB Atlas connection string
    - `JWT_SECRET` — any long random string
    - `CLIENT_ORIGINS` — comma-separated frontend URLs allowed to call the API
-3. `npm run seed` — creates two sample users and two listings
+3. `npm run seed` — creates three sample users and 20 sample listings
    - Host login: `Jane Doe` / `password321`
    - Guest login: `John Doe` / `password123`
 4. `npm run dev` — starts on `http://localhost:5000` (or `npm start` without nodemon)
@@ -159,4 +159,3 @@ curl https://your-app-name-backend.herokuapp.com/api/health
 # List accommodations
 curl https://your-app-name-backend.herokuapp.com/api/accommodations
 ```
-
