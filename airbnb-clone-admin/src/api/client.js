@@ -57,8 +57,8 @@ async function request(path, { method = 'GET', body, token } = {}) {
 export const api = {
   // ── Auth ───────────────────────────────────────────────
   /** Returns { _id, username, role, token } */
-  login: (username, password) =>
-    request('/users/login', { method: 'POST', body: { username, password } }),
+  login: (email, password) =>
+    request('/users/login', { method: 'POST', body: { email, password } }),
 
   /** Re-hydrates the session after a page refresh */
   getCurrentUser: (token) =>

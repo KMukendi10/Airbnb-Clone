@@ -23,12 +23,12 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, [token]);
 
-  async function login(username, password) {
-    const data = await api.login(username, password);
+  async function login(email, password) {
+    const data = await api.login(email, password);
     if (data.role !== 'host') {
       throw new Error('This account is not a host account. Log in with a host account to manage listings.');
     }
-    const loggedInUser = { _id: data._id, username: data.username, role: data.role };
+    const loggedInUser = { _id: data._id, username: data.username, email: data.email, role: data.role };
     localStorage.setItem('admin_token', data.token);
     setToken(data.token);
     setUser(loggedInUser);

@@ -8,7 +8,7 @@ export default function Login() {
   const navigate = useNavigate();
   const CLIENT_URL = import.meta.env.VITE_CLIENT_URL || 'http://localhost:5173';
 
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -17,14 +17,14 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
-    if (!username.trim() || !password) {
+    if (!email.trim() || !password) {
       setError('Please fill in both fields.');
       return;
     }
 
     setSubmitting(true);
     try {
-      await login(username, password);
+      await login(email.trim(), password);
       navigate('/');
     } catch (err) {
       setError(err.message);
@@ -51,14 +51,14 @@ export default function Login() {
           {error && <p className="admin-login-error" role="alert">{error}</p>}
 
           <label>
-            Username / Email
+            Email
             <input
-              type="text"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
               autoFocus
-              placeholder="Enter your username or email"
+              placeholder="Enter your email"
             />
           </label>
 
@@ -89,7 +89,7 @@ export default function Login() {
           </div>
 
           <p className="admin-login-hint">
-            Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
+            Demo host account: <strong>jane@example.com</strong> / <strong>password321</strong>
           </p>
 
         </div>

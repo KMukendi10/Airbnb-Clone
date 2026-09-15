@@ -21,6 +21,7 @@ export default function Login() {
 
   const [mode, setMode] = useState('login'); // 'login' | 'signup'
   const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('user');
   const [error, setError] = useState('');
@@ -35,8 +36,12 @@ export default function Login() {
     e.preventDefault();
     setError('');
 
-    if (!username.trim()) {
-      setError('Please enter your username.');
+    if (mode === 'signup' && !username.trim()) {
+      setError('Please enter a username.');
+      return;
+    }
+    if (!email.trim()) {
+      setError('Please enter your email.');
       return;
     }
     if (password.length < 6) {
@@ -47,9 +52,9 @@ export default function Login() {
     setLoading(true);
     try {
       if (mode === 'signup') {
-        await api.register(username.trim(), password, role);
+        await api.register(username.trim(), email.trim(), password, role);
       }
-      await login(username.trim(), password);
+      await login(email.trim(), password);
       navigate('/');
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -94,20 +99,40 @@ export default function Login() {
             </div>
           )}
 
-          {/* Username */}
+          {/* Username – sign-up only (display name shown on listings/reviews) */}
+          {mode === 'signup' && (
+            <div className="login-field">
+              <label className="login-label" htmlFor="username">
+                Username
+              </label>
+              <input
+                id="username"
+                type="text"
+                className="login-input"
+                placeholder="Enter a username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                autoComplete="username"
+                autoFocus
+                required
+              />
+            </div>
+          )}
+
+          {/* Email */}
           <div className="login-field">
-            <label className="login-label" htmlFor="username">
-              Username
+            <label className="login-label" htmlFor="email">
+              Email
             </label>
             <input
-              id="username"
-              type="text"
+              id="email"
+              type="email"
               className="login-input"
-              placeholder="Enter your username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              autoComplete="username"
-              autoFocus
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              autoFocus={mode === 'login'}
               required
             />
           </div>
@@ -129,6 +154,13 @@ export default function Login() {
               required
             />
           </div>
+
+          {/* Forgot password – login only */}
+          {mode === 'login' && (
+            <a href="#forgot" className="login-forgot">
+              Forgot password?
+            </a>
+          )}
 
           {/* Role selector – sign-up only */}
           {mode === 'signup' && (

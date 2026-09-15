@@ -28,7 +28,7 @@ cp .env.example .env   # set VITE_API_URL=http://localhost:5000/api
 npm run dev             # http://localhost:5174
 ```
 
-Log in with the seeded host account: `JaneDoe` / `password321`  
+Log in with the seeded host account: `jane@example.com` / `password321`  
 (only `role: 'host'` accounts are accepted — `user`-role logins are rejected)
 
 ## Project Structure

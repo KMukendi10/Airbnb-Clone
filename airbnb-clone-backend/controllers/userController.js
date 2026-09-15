@@ -12,21 +12,26 @@ const generateToken = (id) =>
 // @route   POST /api/users/register
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-  const { username, password, role } = req.body;
+  const { username, email, password, role } = req.body;
 
-  if (!username || !password) {
+  if (!username || !email || !password) {
     res.status(400);
-    throw new Error('Username and password are required');
+    throw new Error('Username, email and password are required');
   }
 
-  const existingUser = await User.findOne({ username });
+  const existingUser = await User.findOne({ $or: [{ email }, { username }] });
   if (existingUser) {
     res.status(400);
-    throw new Error('A user with that username already exists');
+    throw new Error(
+      existingUser.email === email
+        ? 'A user with that email already exists'
+        : 'A user with that username already exists'
+    );
   }
 
   const user = await User.create({
     username,
+    email,
     password,
     role: role === 'host' ? 'host' : 'user',
   });
@@ -34,6 +39,7 @@ const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({
     _id: user._id,
     username: user.username,
+    email: user.email,
     role: user.role,
     token: generateToken(user._id),
   });
@@ -43,24 +49,25 @@ const registerUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users/login
 // @access  Public
 const loginUser = asyncHandler(async (req, res) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
-  if (!username || !password) {
+  if (!email || !password) {
     res.status(400);
-    throw new Error('Username and password are required');
+    throw new Error('Email and password are required');
   }
 
   // password has `select: false` on the schema, so it must be explicitly requested
-  const user = await User.findOne({ username }).select('+password');
+  const user = await User.findOne({ email: email.toLowerCase() }).select('+password');
 
   if (!user || !(await user.matchPassword(password))) {
     res.status(401);
-    throw new Error('Invalid username or password');
+    throw new Error('Invalid email or password');
   }
 
   res.json({
     _id: user._id,
     username: user.username,
+    email: user.email,
     role: user.role,
     token: generateToken(user._id),
   });
@@ -74,6 +81,7 @@ const getMe = asyncHandler(async (req, res) => {
   res.json({
     _id: req.user._id,
     username: req.user.username,
+    email: req.user.email,
     role: req.user.role,
   });
 });

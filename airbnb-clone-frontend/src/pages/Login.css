@@ -151,6 +151,21 @@
   box-shadow: 0 0 0 1px #222222;
 }
 
+/* Forgot password */
+
+.login-forgot {
+  display: block;
+  margin: -8px 0 0;
+  color: #d70466;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.login-forgot:hover {
+  color: #b00050;
+}
+
 /* Role selector */
 
 .login-role-grid {

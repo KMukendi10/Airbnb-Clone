@@ -37,8 +37,8 @@ server.js
 ### Users — `/api/users`
 | Method | Route | Access | Description |
 |---|---|---|---|
-| POST | `/register` | Public | Create a new user (`username`, `password`, `role`) |
-| POST | `/login` | Public | Returns `{ _id, username, role, token }` |
+| POST | `/register` | Public | Create a new user (`username`, `email`, `password`, `role`) |
+| POST | `/login` | Public | Returns `{ _id, username, email, role, token }` |
 | GET | `/me` | Private | Returns the logged-in user (for session persistence on refresh) |
 
 ### Accommodations — `/api/accommodations`
@@ -147,8 +147,8 @@ heroku run node seed/seed.js --app your-app-name-backend
 ```
 
 This creates the sample users and listings. After seeding:
-- **Host login:** `JaneDoe` / `password321`
-- **Guest login:** `JohnDoe` / `password123`
+- **Host login:** `jane@example.com` / `password321`
+- **Guest login:** `john@example.com` / `password123`
 
 ### Verifying the deployment
 

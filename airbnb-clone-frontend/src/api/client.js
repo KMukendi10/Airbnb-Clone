@@ -59,12 +59,12 @@ async function request(path, { method = 'GET', body, token } = {}) {
 export const api = {
   // ── Users ──────────────────────────────────────────────
   /** Returns { _id, username, role, token } */
-  login: (username, password) =>
-    request('/users/login', { method: 'POST', body: { username, password } }),
+  login: (email, password) =>
+    request('/users/login', { method: 'POST', body: { email, password } }),
 
-  /** Returns { _id, username, role, token } */
-  register: (username, password, role) =>
-    request('/users/register', { method: 'POST', body: { username, password, role } }),
+  /** Returns { _id, username, email, role, token } */
+  register: (username, email, password, role) =>
+    request('/users/register', { method: 'POST', body: { username, email, password, role } }),
 
   /** Returns { _id, username, role } — used to re-hydrate session on page refresh */
   getCurrentUser: (token) =>

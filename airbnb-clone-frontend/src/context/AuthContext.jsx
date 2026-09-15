@@ -8,7 +8,7 @@
  *
  * State:
  *   token   — raw JWT string (or null)
- *   user    — { _id, username, role } (or null when logged out)
+ *   user    — { _id, username, email, role } (or null when logged out)
  *   loading — true while re-hydrating session from localStorage on first mount
  *
  * Persistence:
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
 
     api
       .getCurrentUser(token)
-      .then((u) => setUser({ _id: u._id, username: u.username, role: u.role }))
+      .then((u) => setUser({ _id: u._id, username: u.username, email: u.email, role: u.role }))
       .catch(() => {
         // Token is invalid or expired — clear it silently
         localStorage.removeItem(STORAGE_KEY);
@@ -49,13 +49,13 @@ export function AuthProvider({ children }) {
 
   /**
    * Log in an existing user.
-   * @param {string} username
+   * @param {string} email
    * @param {string} password
-   * @returns {Promise<{ _id: string, username: string, role: string }>}
+   * @returns {Promise<{ _id: string, username: string, email: string, role: string }>}
    */
-  async function login(username, password) {
-    const data = await api.login(username, password);
-    const loggedInUser = { _id: data._id, username: data.username, role: data.role };
+  async function login(email, password) {
+    const data = await api.login(email, password);
+    const loggedInUser = { _id: data._id, username: data.username, email: data.email, role: data.role };
     localStorage.setItem(STORAGE_KEY, data.token);
     setToken(data.token);
     setUser(loggedInUser);

@@ -17,9 +17,9 @@ dotenv.config();
 
 // ── Sample users ────────────────────────────────────────────
 const USERS = [
-  { username: 'JohnDoe',   password: 'password123', role: 'user' },
-  { username: 'JaneDoe',   password: 'password321', role: 'host' },
-  { username: 'AliceSmith',password: 'password123', role: 'user' },
+  { username: 'JohnDoe',   email: 'john@example.com',  password: 'password123', role: 'user' },
+  { username: 'JaneDoe',   email: 'jane@example.com',  password: 'password321', role: 'host' },
+  { username: 'AliceSmith',email: 'alice@example.com', password: 'password123', role: 'user' },
 ];
 
 // ── Accommodation factory (host id injected at runtime) ─────
@@ -226,8 +226,8 @@ const run = async () => {
   console.log('\n✅ Seed complete!');
   console.log(`   ${createdUsers.length} users created`);
   console.log(`   ${accommodations.length} accommodations created`);
-  console.log('\n   Host login:  username="JaneDoe"  password="password321"');
-  console.log('   Guest login: username="JohnDoe"  password="password123"');
+  console.log('\n   Host login:  email="jane@example.com"  password="password321"');
+  console.log('   Guest login: email="john@example.com"  password="password123"');
   process.exit(0);
 };
 

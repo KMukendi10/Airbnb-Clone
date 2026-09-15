@@ -10,34 +10,46 @@ describe('POST /api/users/register', () => {
 
   it('creates a new user and returns a token', async () => {
     User.findOne.mockResolvedValue(null); // no existing user
-    User.create.mockResolvedValue({ _id: 'u1', username: 'newhost', role: 'host' });
+    User.create.mockResolvedValue({ _id: 'u1', username: 'newhost', email: 'newhost@example.com', role: 'host' });
 
     const res = await request(app)
       .post('/api/users/register')
-      .send({ username: 'newhost', password: 'password123', role: 'host' });
+      .send({ username: 'newhost', email: 'newhost@example.com', password: 'password123', role: 'host' });
 
     expect(res.status).toBe(201);
     expect(res.body.username).toBe('newhost');
+    expect(res.body.email).toBe('newhost@example.com');
     expect(res.body.role).toBe('host');
     expect(typeof res.body.token).toBe('string');
   });
 
-  it('rejects when username or password is missing', async () => {
+  it('rejects when username, email or password is missing', async () => {
     const res = await request(app).post('/api/users/register').send({ username: 'onlyusername' });
 
     expect(res.status).toBe(400);
     expect(res.body.message).toMatch(/required/i);
   });
 
-  it('rejects a duplicate username with 400', async () => {
-    User.findOne.mockResolvedValue({ _id: 'existing', username: 'taken' });
+  it('rejects a duplicate email with 400', async () => {
+    User.findOne.mockResolvedValue({ _id: 'existing', username: 'someoneelse', email: 'taken@example.com' });
 
     const res = await request(app)
       .post('/api/users/register')
-      .send({ username: 'taken', password: 'password123' });
+      .send({ username: 'newname', email: 'taken@example.com', password: 'password123' });
 
     expect(res.status).toBe(400);
-    expect(res.body.message).toMatch(/already exists/i);
+    expect(res.body.message).toMatch(/email already exists/i);
+  });
+
+  it('rejects a duplicate username with 400', async () => {
+    User.findOne.mockResolvedValue({ _id: 'existing', username: 'taken', email: 'other@example.com' });
+
+    const res = await request(app)
+      .post('/api/users/register')
+      .send({ username: 'taken', email: 'new@example.com', password: 'password123' });
+
+    expect(res.status).toBe(400);
+    expect(res.body.message).toMatch(/username already exists/i);
   });
 });
 
@@ -48,6 +60,7 @@ describe('POST /api/users/login', () => {
     const fakeUser = {
       _id: 'u1',
       username: 'JaneDoe',
+      email: 'jane@example.com',
       role: 'host',
       matchPassword: jest.fn().mockResolvedValue(true),
     };
@@ -55,10 +68,11 @@ describe('POST /api/users/login', () => {
 
     const res = await request(app)
       .post('/api/users/login')
-      .send({ username: 'JaneDoe', password: 'password321' });
+      .send({ email: 'jane@example.com', password: 'password321' });
 
     expect(res.status).toBe(200);
     expect(res.body.username).toBe('JaneDoe');
+    expect(res.body.email).toBe('jane@example.com');
     expect(typeof res.body.token).toBe('string');
   });
 
@@ -66,6 +80,7 @@ describe('POST /api/users/login', () => {
     const fakeUser = {
       _id: 'u1',
       username: 'JaneDoe',
+      email: 'jane@example.com',
       role: 'host',
       matchPassword: jest.fn().mockResolvedValue(false),
     };
@@ -73,18 +88,18 @@ describe('POST /api/users/login', () => {
 
     const res = await request(app)
       .post('/api/users/login')
-      .send({ username: 'JaneDoe', password: 'wrongpassword' });
+      .send({ email: 'jane@example.com', password: 'wrongpassword' });
 
     expect(res.status).toBe(401);
     expect(res.body.message).toMatch(/invalid/i);
   });
 
-  it('rejects a username that does not exist with 401 (not 404 — avoids leaking which usernames are registered)', async () => {
+  it('rejects an email that does not exist with 401 (not 404 — avoids leaking which emails are registered)', async () => {
     User.findOne.mockReturnValue({ select: jest.fn().mockResolvedValue(null) });
 
     const res = await request(app)
       .post('/api/users/login')
-      .send({ username: 'ghost', password: 'password123' });
+      .send({ email: 'ghost@example.com', password: 'password123' });
 
     expect(res.status).toBe(401);
   });
@@ -99,7 +114,7 @@ describe('GET /api/users/me', () => {
   });
 
   it('returns the current user for a valid token', async () => {
-    const fakeUser = { _id: 'u1', username: 'JaneDoe', role: 'host' };
+    const fakeUser = { _id: 'u1', username: 'JaneDoe', email: 'jane@example.com', role: 'host' };
     User.findById.mockResolvedValue(fakeUser);
     const token = jwt.sign({ id: 'u1' }, process.env.JWT_SECRET);
 
@@ -107,5 +122,6 @@ describe('GET /api/users/me', () => {
 
     expect(res.status).toBe(200);
     expect(res.body.username).toBe('JaneDoe');
+    expect(res.body.email).toBe('jane@example.com');
   });
 });
