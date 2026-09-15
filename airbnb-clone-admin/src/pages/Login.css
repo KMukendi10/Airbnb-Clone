@@ -34,11 +34,25 @@
 }
 
 .admin-login-logo {
-  color: #ff385c;
-  font-size: 30px;
-  font-weight: 800;
-  letter-spacing: -1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   margin-bottom: 14px;
+}
+
+.admin-login-logo-mark {
+  width: 30px;
+  height: 30px;
+  color: #ff385c;
+}
+
+.admin-login-logo-text {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ff385c;
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
 .admin-login-header h1 {
@@ -182,8 +196,20 @@
 
 /* Guest navigation */
 
-.admin-login-guest-link-wrapper {
-  margin-top: 18px;
+.admin-login-switch-site {
+  margin: 22px 0 0;
+  padding: 18px;
+  border: 1px solid #ffd0d7;
+  border-radius: 10px;
+  background: #fff7f8;
+  text-align: center;
+}
+
+.admin-login-switch-site p {
+  margin: 0 0 10px;
+  color: #222222;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .admin-login-guest-link {

@@ -53,10 +53,25 @@
 }
 
 .login-logo {
-  width: 42px;
-  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.login-logo-mark {
+  width: 30px;
+  height: 30px;
   color: #ff385c;
-  margin: 0 auto 14px;
+}
+
+.login-logo-text {
+  font-size: 26px;
+  font-weight: 800;
+  color: #ff385c;
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
 .login-title {
@@ -169,11 +184,6 @@
 .login-role-option--active {
   border-color: #ff385c;
   background: #fff5f6;
-}
-
-.login-role-icon {
-  font-size: 23px;
-  line-height: 1;
 }
 
 .login-role-text {

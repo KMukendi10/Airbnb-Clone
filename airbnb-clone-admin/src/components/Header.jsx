@@ -32,6 +32,7 @@ export default function Header({ toolbar = DEFAULT_TOOLBAR }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
+  const CLIENT_URL = import.meta.env.VITE_CLIENT_URL || 'http://localhost:5173';
 
   /* Close dropdown on outside click */
   useEffect(() => {
@@ -56,10 +57,10 @@ export default function Header({ toolbar = DEFAULT_TOOLBAR }) {
     <header className="admin-header">
       {/* ── Top bar: logo, username, hamburger/avatar ── */}
       <div className="container admin-header-inner">
-        <Link to="/" className="admin-logo" aria-label="Admin dashboard home">
+        <a href={CLIENT_URL} className="admin-logo" aria-label="Back to the guest site">
           <AirbnbMark />
           <span className="admin-logo-text">airbnb</span>
-        </Link>
+        </a>
 
         {user && (
           <div className="admin-header-right">
