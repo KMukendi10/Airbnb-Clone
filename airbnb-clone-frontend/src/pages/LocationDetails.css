@@ -163,12 +163,6 @@
   padding: 8px 0;
 }
 
-.details-highlight__icon {
-  font-size: 24px;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
 .details-highlight__title {
   font-weight: 600;
   font-size: var(--font-size-base);
@@ -216,10 +210,18 @@
 }
 
 .amenity-icon {
-  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 24px;
-  text-align: center;
+  height: 24px;
   flex-shrink: 0;
+  color: var(--color-text);
+}
+
+.amenity-icon-svg {
+  width: 22px;
+  height: 22px;
 }
 
 /* Ratings grid */

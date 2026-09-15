@@ -651,7 +651,7 @@ export default function ListingForm({ initialValues, onSubmit, submitLabel, onCa
 
       {submitError && (
         <div className="lf-submit-error" role="alert">
-          ⚠ {submitError}
+          {submitError}
         </div>
       )}
 

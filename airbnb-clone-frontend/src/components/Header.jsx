@@ -477,7 +477,6 @@ export default function Header({ onFilter, transparent = false, defaultLocation 
                         onKeyDown={(e) => e.key === 'Enter' && (setWhereValue(opt.value), setWhereOpen(false))}
                         tabIndex={0}
                       >
-                        <span className="hero-where-icon" aria-hidden="true">📍</span>
                         {opt.label}
                       </li>
                     ))}

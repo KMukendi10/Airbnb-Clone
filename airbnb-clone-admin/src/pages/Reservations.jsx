@@ -63,7 +63,7 @@ export default function Reservations() {
         {/* Error */}
         {!loading && error && (
           <div className="res-status-panel res-status-panel--error" role="alert">
-            <p>⚠ {error}</p>
+            <p>{error}</p>
           </div>
         )}
 

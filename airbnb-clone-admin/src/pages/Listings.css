@@ -52,12 +52,6 @@
   text-align: center;
 }
 
-.listings-empty__icon {
-  font-size: 56px;
-  line-height: 1;
-  margin-bottom: 8px;
-}
-
 .listings-empty__title {
   font-size: var(--font-size-xl);
   font-weight: 700;

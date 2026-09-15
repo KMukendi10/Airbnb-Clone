@@ -21,27 +21,131 @@ import { useAuth } from '../context/AuthContext';
 import { api, resolveImageUrl } from '../api/client';
 import './LocationDetails.css';
 
-// ── Amenity icons (simple emoji fallback map) ──────────────
-const AMENITY_ICONS = {
-  wifi: '📶',
-  pool: '🏊',
-  kitchen: '🍳',
-  parking: '🅿️',
-  gym: '🏋️',
-  tv: '📺',
-  washer: '🧺',
-  dryer: '🌬️',
-  heating: '🔥',
-  'air conditioning': '❄️',
-  default: '✓',
+// ── Amenity icons (simple line SVGs, replacing the old emoji map) ──
+const AMENITY_TYPES = {
+  wifi: 'wifi',
+  pool: 'pool',
+  kitchen: 'kitchen',
+  parking: 'parking',
+  gym: 'gym',
+  tv: 'tv',
+  washer: 'washer',
+  dryer: 'dryer',
+  heating: 'heating',
+  'air conditioning': 'ac',
 };
 
-function amenityIcon(name = '') {
+function amenityType(name = '') {
   const key = name.toLowerCase();
-  for (const [k, v] of Object.entries(AMENITY_ICONS)) {
+  for (const [k, v] of Object.entries(AMENITY_TYPES)) {
     if (key.includes(k)) return v;
   }
-  return AMENITY_ICONS.default;
+  return 'default';
+}
+
+function AmenityIcon({ type }) {
+  const common = {
+    className: 'amenity-icon-svg',
+    viewBox: '0 0 24 24',
+    'aria-hidden': 'true',
+  };
+  switch (type) {
+    case 'wifi':
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="19" r="1.4" fill="currentColor" />
+          <path d="M8.5 15.5a5 5 0 0 1 7 0" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+          <path d="M5.3 12.3a9.5 9.5 0 0 1 13.4 0" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+          <path d="M2 9a14 14 0 0 1 20 0" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+        </svg>
+      );
+    case 'pool':
+      return (
+        <svg {...common}>
+          <circle cx="17" cy="5.5" r="2" fill="currentColor" />
+          <path d="M8.5 10 15 3.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <path d="M2 12.5c1.6 1.4 3.2 1.4 4.8 0s3.2-1.4 4.8 0 3.2 1.4 4.8 0 3.2-1.4 4.8 0" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+          <path d="M2 17.5c1.6 1.4 3.2 1.4 4.8 0s3.2-1.4 4.8 0 3.2 1.4 4.8 0 3.2-1.4 4.8 0" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" />
+        </svg>
+      );
+    case 'kitchen':
+      return (
+        <svg {...common}>
+          <path d="M4 11.5h15a3.5 3.5 0 0 1-3.5 3.5h-8A3.5 3.5 0 0 1 4 11.5Z" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinejoin="round" />
+          <path d="M19 10.5h2.2" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+          <path d="M7 11.5V6.5M11 11.5V6.5" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case 'parking':
+      return (
+        <svg {...common}>
+          <rect x="3" y="3" width="18" height="18" rx="3" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <path d="M9.2 17V7h3.6a3 3 0 1 1 0 6H9.2" stroke="currentColor" strokeWidth="1.7" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    case 'gym':
+      return (
+        <svg {...common}>
+          <path d="M2.5 12h2.2M19.3 12h2.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <path d="M4.7 9v6M19.3 9v6" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+          <rect x="6.3" y="7.5" width="2.6" height="9" rx="1" fill="currentColor" />
+          <rect x="15.1" y="7.5" width="2.6" height="9" rx="1" fill="currentColor" />
+          <path d="M8.9 12h6.2" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
+        </svg>
+      );
+    case 'tv':
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="18" height="12" rx="2" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <path d="M9 20.5h6" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" />
+        </svg>
+      );
+    case 'washer':
+      return (
+        <svg {...common}>
+          <rect x="3.5" y="3" width="17" height="18" rx="2.2" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <circle cx="12" cy="13.5" r="4.6" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <circle cx="12" cy="13.5" r="2" stroke="currentColor" strokeWidth="1.3" fill="none" />
+          <circle cx="7" cy="6.3" r="0.9" fill="currentColor" />
+          <circle cx="10" cy="6.3" r="0.9" fill="currentColor" />
+        </svg>
+      );
+    case 'dryer':
+      return (
+        <svg {...common}>
+          <rect x="3.5" y="3" width="17" height="18" rx="2.2" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <circle cx="12" cy="13.5" r="4.6" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <path d="M9.6 13.5a2.4 2.4 0 0 1 4.8 0" stroke="currentColor" strokeWidth="1.4" fill="none" strokeLinecap="round" />
+          <circle cx="7" cy="6.3" r="0.9" fill="currentColor" />
+        </svg>
+      );
+    case 'heating':
+      return (
+        <svg {...common}>
+          <path
+            d="M12 2.3c1.8 2.7-0.9 3.8-0.9 6a2.9 2.9 0 1 0 5.7 0.6c0.9 3.8-1 7.7-4.8 10.4-3.8-2.7-5.7-6.6-4.8-10.4 0.7-2.9 2.8-3.4 4.8-6.6z"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            fill="none"
+            strokeLinejoin="round"
+          />
+        </svg>
+      );
+    case 'ac':
+      return (
+        <svg {...common}>
+          <path d="M12 2.5v19M4.3 6.2l15.4 11.6M19.7 6.2 4.3 17.8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+          <path d="M9.4 4.3 12 2.5l2.6 1.8M9.4 19.7l2.6 1.8 2.6-1.8M3.7 9.6 2 12l1.7 2.4M20.3 9.6 22 12l-1.7 2.4" stroke="currentColor" strokeWidth="1.5" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+    default:
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="9.3" stroke="currentColor" strokeWidth="1.7" fill="none" />
+          <path d="M7.8 12.3 10.4 15l5.8-6" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        </svg>
+      );
+  }
 }
 
 // ── Superhost badge icon (ribbon/medal) ────────────────────
@@ -418,7 +522,7 @@ export default function LocationDetails() {
             {listing.rating >= 4.5 && (
               <>
                 <span className="details-meta-dot" aria-hidden="true">·</span>
-                <span className="details-meta-item">🏅 Superhost</span>
+                <span className="details-meta-item">Superhost</span>
               </>
             )}
             <span className="details-meta-dot" aria-hidden="true">·</span>
@@ -446,15 +550,13 @@ export default function LocationDetails() {
               />
             ))}
           </div>
-          {images.length > 1 && (
-            <button
-              type="button"
-              className="gallery-show-all-btn"
-              onClick={() => setShowAllPhotos(true)}
-            >
-              <span aria-hidden="true">▦</span> Show all photos
-            </button>
-          )}
+          <button
+            type="button"
+            className="gallery-show-all-btn"
+            onClick={() => setShowAllPhotos(true)}
+          >
+            <span aria-hidden="true">▦</span> Show all photos
+          </button>
         </div>
 
         {/* ════ Photo lightbox ════ */}
@@ -505,7 +607,6 @@ export default function LocationDetails() {
             {/* Self check-in badge */}
             {listing.selfCheckIn && (
               <div className="details-highlight">
-                <span className="details-highlight__icon" aria-hidden="true">🔑</span>
                 <div>
                   <p className="details-highlight__title">Self check-in</p>
                   <p className="details-highlight__desc">Check yourself in with the keypad.</p>
@@ -516,7 +617,6 @@ export default function LocationDetails() {
             {/* Enhanced cleaning badge */}
             {listing.enhancedCleaning && (
               <div className="details-highlight">
-                <span className="details-highlight__icon" aria-hidden="true">✨</span>
                 <div>
                   <p className="details-highlight__title">Enhanced cleaning</p>
                   <p className="details-highlight__desc">This host follows Airbnb's 5-step enhanced cleaning process.</p>
@@ -558,7 +658,9 @@ export default function LocationDetails() {
                   <ul className="amenities-grid">
                     {visibleAmenities.map((a) => (
                       <li key={a} className="amenity-item">
-                        <span className="amenity-icon" aria-hidden="true">{amenityIcon(a)}</span>
+                        <span className="amenity-icon" aria-hidden="true">
+                          <AmenityIcon type={amenityType(a)} />
+                        </span>
                         {a}
                       </li>
                     ))}
@@ -711,7 +813,7 @@ export default function LocationDetails() {
                   <span aria-hidden="true">·</span>
                   <span>✓ Identity verified</span>
                   <span aria-hidden="true">·</span>
-                  <span>🏅 Superhost</span>
+                  <span>Superhost</span>
                 </p>
               )}
 
@@ -733,7 +835,7 @@ export default function LocationDetails() {
               </button>
 
               <p className="host-card__safety">
-                🛡 To protect your payment, never transfer money or communicate outside of
+                To protect your payment, never transfer money or communicate outside of
                 the Airbnb website or app.
               </p>
             </section>

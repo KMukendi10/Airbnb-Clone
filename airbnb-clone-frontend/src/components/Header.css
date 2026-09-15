@@ -634,8 +634,6 @@
 
 .hero-where-option--active { font-weight: 600; }
 
-.hero-where-icon { font-size: 16px; flex-shrink: 0; }
-
 /* Guest counter */
 .hero-guest-counter {
   display: flex;

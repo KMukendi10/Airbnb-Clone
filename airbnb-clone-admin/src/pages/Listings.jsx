@@ -66,14 +66,13 @@ export default function Listings() {
         {/* ── Error ── */}
         {!loading && error && (
           <div className="listings-status listings-status--error" role="alert">
-            <p>⚠ {error}</p>
+            <p>{error}</p>
           </div>
         )}
 
         {/* ── Empty ── */}
         {!loading && !error && listings.length === 0 && (
           <div className="listings-empty">
-            <div className="listings-empty__icon" aria-hidden="true">🏡</div>
             <h3 className="listings-empty__title">No listings yet</h3>
             <p className="listings-empty__subtitle">
               Create your first listing to start accepting guests.

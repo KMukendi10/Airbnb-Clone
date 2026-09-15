@@ -280,7 +280,7 @@ export default function Location() {
 
         {!loading && error && (
           <div className="location-status location-status--error" role="alert">
-            <p>⚠ {error}</p>
+            <p>{error}</p>
             <button
               className="btn btn-outline"
               onClick={() => handleFilter(locationFilter)}

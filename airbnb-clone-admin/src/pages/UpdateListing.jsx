@@ -54,7 +54,7 @@ export default function UpdateListing() {
         <Header toolbar={[{ label: 'View my listings', to: '/' }]} />
         <main className="form-page-main">
           <div className="form-page-status form-page-status--error" role="alert">
-            <p>⚠ {error || 'Listing not found.'}</p>
+            <p>{error || 'Listing not found.'}</p>
             <button className="btn btn-outline btn-sm" onClick={() => navigate('/')}>
               ← Back to listings
             </button>

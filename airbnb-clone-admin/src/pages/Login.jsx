@@ -82,14 +82,14 @@ export default function Login() {
           </button>
 
           <div className="admin-login-switch-site">
-            <p>No host account yet? Sign up as a guest first, then enable hosting.</p>
+            <p>New here, or logging in as a guest?</p>
             <a href={`${CLIENT_URL}/login`} className="admin-login-guest-link">
               ← Back to guest login
             </a>
           </div>
 
           <p className="admin-login-hint">
-            💡 Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
+            Demo host account: <strong>JaneDoe</strong> / <strong>password321</strong>
           </p>
 
         </div>
