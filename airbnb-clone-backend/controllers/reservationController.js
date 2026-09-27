@@ -5,6 +5,13 @@ const asyncHandler = require('../utils/asyncHandler');
 
 const MS_PER_NIGHT = 1000 * 60 * 60 * 24;
 
+// Minimum gap required between one guest's checkout and the next guest's
+// check-in on the same listing — e.g. time for cleaning/turnover. Sits at
+// 1 full day by default (no same-day back-to-back bookings); set to 0 to
+// go back to allowing same-day turnover.
+const CLEANING_BUFFER_DAYS = 1;
+const BUFFER_MS = CLEANING_BUFFER_DAYS * MS_PER_NIGHT;
+
 // Recomputes the cost breakdown server-side from the accommodation's own
 // fees rather than trusting a total sent by the client.
 const calculateCost = (accommodation, checkIn, checkOut) => {
@@ -74,22 +81,26 @@ const createReservation = asyncHandler(async (req, res) => {
   // "one atomic operation on one document". This single findOneAndUpdate
   // does the overlap check AND claims the dates in the same indivisible step:
   // it only matches (and pushes the new range into bookedDates) if no
-  // existing range on this accommodation overlaps [checkInDate, checkOutDate).
-  // MongoDB serializes writes to a single document, so if two requests race
-  // for the same/overlapping dates, whichever is applied first wins the match
-  // and pushes its range; the second one then sees that freshly-pushed range
-  // as part of its own query and fails the overlap check — findOneAndUpdate
-  // returns null and we respond 409. This is optimistic-locking-style
-  // concurrency control scoped to a single document, so it works even
-  // without a replica set / multi-document transactions.
+  // existing range on this accommodation overlaps [checkInDate, checkOutDate),
+  // widened by CLEANING_BUFFER_DAYS on both sides so back-to-back same-day
+  // turnovers are also blocked. MongoDB serializes writes to a single
+  // document, so if two requests race for the same/overlapping dates,
+  // whichever is applied first wins the match and pushes its range; the
+  // second one then sees that freshly-pushed range as part of its own query
+  // and fails the overlap check — findOneAndUpdate returns null and we
+  // respond 409. This is optimistic-locking-style concurrency control
+  // scoped to a single document, so it works even without a replica set /
+  // multi-document transactions.
   const claimed = await Accommodation.findOneAndUpdate(
     {
       _id: accommodationId,
       bookedDates: {
         $not: {
           $elemMatch: {
-            checkIn: { $lt: checkOutDate },
-            checkOut: { $gt: checkInDate },
+            // existing.checkIn < requested.checkOut + buffer
+            checkIn: { $lt: new Date(checkOutDate.getTime() + BUFFER_MS) },
+            // existing.checkOut > requested.checkIn - buffer
+            checkOut: { $gt: new Date(checkInDate.getTime() - BUFFER_MS) },
           },
         },
       },
@@ -105,7 +116,7 @@ const createReservation = asyncHandler(async (req, res) => {
   if (!claimed) {
     res.status(409);
     throw new Error(
-      'Those dates were just booked for this listing. Please choose different dates.'
+      'Those dates are unavailable — either already booked or too close to another booking for turnover/cleaning. Please choose different dates.'
     );
   }
 

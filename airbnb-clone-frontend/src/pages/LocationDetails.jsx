@@ -293,13 +293,19 @@ export default function LocationDetails() {
   // Dates already held by another confirmed reservation on this listing.
   // The backend is the source of truth for actually preventing a double
   // booking (see reservationController.createReservation); this just keeps
-  // the guest from picking dates that would be rejected anyway.
+  // the guest from picking dates that would be rejected anyway. Widened by
+  // the same 1-day cleaning buffer the backend enforces (keep this in sync
+  // with CLEANING_BUFFER_DAYS in reservationController.js).
+  const CLEANING_BUFFER_DAYS = 1;
   const bookedRanges = useMemo(
     () =>
-      (listing?.bookedDates || []).map((r) => ({
-        checkIn: toISODate(new Date(r.checkIn)),
-        checkOut: toISODate(new Date(r.checkOut)),
-      })),
+      (listing?.bookedDates || []).map((r) => {
+        const checkIn = new Date(r.checkIn);
+        const checkOut = new Date(r.checkOut);
+        checkIn.setDate(checkIn.getDate() - CLEANING_BUFFER_DAYS);
+        checkOut.setDate(checkOut.getDate() + CLEANING_BUFFER_DAYS);
+        return { checkIn: toISODate(checkIn), checkOut: toISODate(checkOut) };
+      }),
     [listing]
   );
 

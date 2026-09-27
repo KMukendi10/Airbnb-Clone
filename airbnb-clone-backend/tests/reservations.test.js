@@ -130,6 +130,28 @@ describe('POST /api/reservations', () => {
     expect(Reservation.create).not.toHaveBeenCalled();
   });
 
+  it('widens the overlap check by the 1-day cleaning buffer on both sides', async () => {
+    Accommodation.findById.mockResolvedValue(fakeListing);
+
+    await request(app)
+      .post('/api/reservations')
+      .set('Authorization', `Bearer ${tokenFor('guest1')}`)
+      .send({
+        accommodationId: 'acc1',
+        checkIn: '2026-09-10',
+        checkOut: '2026-09-12',
+        guests: 2,
+      });
+
+    const query = Accommodation.findOneAndUpdate.mock.calls[0][0];
+    const elemMatch = query.bookedDates.$not.$elemMatch;
+
+    // requested checkOut (Sep 12) + 1 day buffer = Sep 13
+    expect(elemMatch.checkIn.$lt.toISOString()).toBe(new Date('2026-09-13').toISOString());
+    // requested checkIn (Sep 10) - 1 day buffer = Sep 9
+    expect(elemMatch.checkOut.$gt.toISOString()).toBe(new Date('2026-09-09').toISOString());
+  });
+
   it('releases the date hold if creating the Reservation fails after the claim succeeds', async () => {
     Accommodation.findById.mockResolvedValue(fakeListing);
     Accommodation.findOneAndUpdate.mockResolvedValue(fakeListing);
