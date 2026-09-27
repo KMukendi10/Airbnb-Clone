@@ -29,6 +29,8 @@ const fakeListing = {
 describe('POST /api/reservations', () => {
   beforeEach(() => {
     User.findById.mockResolvedValue({ _id: 'guest1', role: 'user' });
+    // Default: the atomic date-claim succeeds (no overlap found).
+    Accommodation.findOneAndUpdate.mockResolvedValue(fakeListing);
   });
   afterEach(() => jest.clearAllMocks());
 
@@ -105,6 +107,52 @@ describe('POST /api/reservations', () => {
     expect(res.body.totalNights).toBe(3);
     expect(res.body.totalCost).toBe(3400);
   });
+
+  it('returns 409 when someone else already holds an overlapping date range (lost the race)', async () => {
+    Accommodation.findById.mockResolvedValue(fakeListing);
+    // The atomic claim fails to match because bookedDates already has an
+    // overlapping range — this is what a concurrent double-booking attempt
+    // looks like from the controller's point of view.
+    Accommodation.findOneAndUpdate.mockResolvedValue(null);
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', `Bearer ${tokenFor('guest1')}`)
+      .send({
+        accommodationId: 'acc1',
+        checkIn: '2026-09-01',
+        checkOut: '2026-09-03',
+        guests: 2,
+      });
+
+    expect(res.status).toBe(409);
+    expect(res.body.message).toMatch(/booked|available/i);
+    expect(Reservation.create).not.toHaveBeenCalled();
+  });
+
+  it('releases the date hold if creating the Reservation fails after the claim succeeds', async () => {
+    Accommodation.findById.mockResolvedValue(fakeListing);
+    Accommodation.findOneAndUpdate.mockResolvedValue(fakeListing);
+    Accommodation.updateOne.mockResolvedValue({});
+    Reservation.create.mockRejectedValue(new Error('unexpected DB error'));
+
+    const res = await request(app)
+      .post('/api/reservations')
+      .set('Authorization', `Bearer ${tokenFor('guest1')}`)
+      .send({
+        accommodationId: 'acc1',
+        checkIn: '2026-09-01',
+        checkOut: '2026-09-03',
+        guests: 2,
+      });
+
+    expect(res.status).toBe(500);
+    // The hold taken via findOneAndUpdate must be released with a matching $pull
+    expect(Accommodation.updateOne).toHaveBeenCalledWith(
+      { _id: 'acc1' },
+      { $pull: { bookedDates: { reservation: expect.anything() } } }
+    );
+  });
 });
 
 describe('GET /api/reservations/host and /user', () => {
@@ -136,20 +184,28 @@ describe('GET /api/reservations/host and /user', () => {
 describe('DELETE /api/reservations/:id', () => {
   afterEach(() => jest.clearAllMocks());
 
-  it('allows the guest who booked it to cancel', async () => {
+  it('allows the guest who booked it to cancel, and releases the held dates', async () => {
     User.findById.mockResolvedValue({ _id: 'guest1', role: 'user' });
     Reservation.findById.mockResolvedValue({
       _id: 'r1',
+      accommodation: 'acc1',
       user: { toString: () => 'guest1' },
       host: { toString: () => 'host1' },
       deleteOne: jest.fn().mockResolvedValue({}),
     });
+    Accommodation.updateOne.mockResolvedValue({});
 
     const res = await request(app)
       .delete('/api/reservations/r1')
       .set('Authorization', `Bearer ${tokenFor('guest1')}`);
 
     expect(res.status).toBe(200);
+    // Cancelling must free the dates back up on the listing so someone
+    // else can book them.
+    expect(Accommodation.updateOne).toHaveBeenCalledWith(
+      { _id: 'acc1' },
+      { $pull: { bookedDates: { reservation: 'r1' } } }
+    );
   });
 
   it('allows the host who owns the listing to cancel', async () => {

@@ -290,6 +290,32 @@ export default function LocationDetails() {
   // Today's date string for min date on inputs
   const today = new Date().toISOString().split('T')[0];
 
+  // Dates already held by another confirmed reservation on this listing.
+  // The backend is the source of truth for actually preventing a double
+  // booking (see reservationController.createReservation); this just keeps
+  // the guest from picking dates that would be rejected anyway.
+  const bookedRanges = useMemo(
+    () =>
+      (listing?.bookedDates || []).map((r) => ({
+        checkIn: toISODate(new Date(r.checkIn)),
+        checkOut: toISODate(new Date(r.checkOut)),
+      })),
+    [listing]
+  );
+
+  function isDateBooked(iso) {
+    // A range's checkOut day itself is free (that's a same-day turnover),
+    // so the booked span is [checkIn, checkOut).
+    return bookedRanges.some((r) => iso >= r.checkIn && iso < r.checkOut);
+  }
+
+  // True if any night strictly between two dates (exclusive) falls inside
+  // a booked range — used to stop a checkout click from spanning over a
+  // booking that sits in the middle of the selected range.
+  function rangeCrossesBooking(startIso, endIso) {
+    return bookedRanges.some((r) => r.checkIn < endIso && r.checkOut > startIso);
+  }
+
   // Dynamic cost breakdown
   const costBreakdown = useMemo(() => {
     if (!listing) return null;
@@ -343,8 +369,16 @@ export default function LocationDetails() {
       setReserveMessage(
         'Reservation confirmed! View it in your profile → "View reservations".'
       );
+      setCheckIn('');
+      setCheckOut('');
+      // Refresh the listing so the calendar immediately closes off the
+      // dates we just booked (bookedDates comes back updated from the server).
+      api.getAccommodation(listing._id).then(setListing).catch(() => {});
     } catch (err) {
       setReserveMessage(err.message);
+      // Someone else may have just grabbed these dates — refresh so the
+      // calendar reflects reality instead of still showing them as free.
+      api.getAccommodation(listing._id).then(setListing).catch(() => {});
     } finally {
       setReserving(false);
     }
@@ -365,12 +399,17 @@ export default function LocationDetails() {
   function handleDayClick(date) {
     if (!date) return;
     const iso = toISODate(date);
-    if (iso < today) return;
+    if (iso < today || isDateBooked(iso)) return;
 
     if (!checkIn || (checkIn && checkOut)) {
       setCheckIn(iso);
       setCheckOut('');
     } else if (iso <= checkIn) {
+      setCheckIn(iso);
+      setCheckOut('');
+    } else if (rangeCrossesBooking(checkIn, iso)) {
+      // Picking this as checkout would span over a night that's already
+      // booked in between — restart the selection from this day instead.
       setCheckIn(iso);
       setCheckOut('');
     } else {
@@ -453,12 +492,14 @@ export default function LocationDetails() {
             if (!date) return <span key={i} className="cal-day cal-day--empty" />;
             const iso = toISODate(date);
             const isPast = iso < today;
+            const isBooked = isDateBooked(iso);
             const isStart = iso === checkIn;
             const isEnd = iso === checkOut;
             const inRange = checkIn && checkOut && iso > checkIn && iso < checkOut;
             const classes = [
               'cal-day',
-              isPast ? 'cal-day--disabled' : '',
+              isPast || isBooked ? 'cal-day--disabled' : '',
+              isBooked ? 'cal-day--booked' : '',
               isStart || isEnd ? 'cal-day--selected' : '',
               inRange ? 'cal-day--in-range' : '',
             ].filter(Boolean).join(' ');
@@ -468,10 +509,11 @@ export default function LocationDetails() {
                 key={i}
                 type="button"
                 className={classes}
-                disabled={isPast}
+                disabled={isPast || isBooked}
                 onClick={() => handleDayClick(date)}
                 aria-pressed={isStart || isEnd}
-                aria-label={date.toDateString()}
+                aria-label={`${date.toDateString()}${isBooked ? ' — already booked' : ''}`}
+                title={isBooked ? 'Already booked' : undefined}
               >
                 {date.getDate()}
               </button>

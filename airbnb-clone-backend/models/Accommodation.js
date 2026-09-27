@@ -67,6 +67,28 @@ const accommodationSchema = new mongoose.Schema(
     reviews: { type: Number, default: 0 },
     specificRatings: { type: specificRatingsSchema, default: () => ({}) },
 
+    // Confirmed date ranges currently held against this listing. This lives
+    // on the Accommodation document (rather than only on Reservation) so a
+    // single atomic findOneAndUpdate can check "does the requested range
+    // overlap any of these" AND push the new range in one indivisible step —
+    // see reservationController.createReservation for why that matters for
+    // preventing double bookings under concurrent requests.
+    bookedDates: {
+      type: [
+        {
+          _id: false,
+          checkIn: { type: Date, required: true },
+          checkOut: { type: Date, required: true },
+          reservation: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Reservation',
+            required: true,
+          },
+        },
+      ],
+      default: [],
+    },
+
     // Owner of the listing - used to scope "My Listings" in the admin dashboard
     host: {
       type: mongoose.Schema.Types.ObjectId,

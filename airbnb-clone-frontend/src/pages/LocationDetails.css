@@ -927,6 +927,11 @@
   cursor: not-allowed;
 }
 
+.cal-day--booked {
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
 .cal-day--in-range {
   background: var(--color-bg-alt);
   border-radius: 0;
