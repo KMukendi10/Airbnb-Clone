@@ -18,7 +18,7 @@ manage their property listings and view incoming guest reservations.
 | `/` | `Listings` | Protected | "My Listings" with thumbnail, meta and Edit/Delete |
 | `/listings/new` | `CreateListing` | Protected | New listing form |
 | `/listings/:id/edit` | `UpdateListing` | Protected | Pre-filled update form |
-| `/reservations` | `Reservations` | Protected | Incoming bookings table |
+| `/reservations` | `Reservations` | Protected | Incoming bookings table — dates shown are confirmed, conflict-free bookings (the backend now rejects overlapping/too-close bookings at creation time) |
 
 ## Setup
 
@@ -65,5 +65,10 @@ validation provides a second layer of protection.
 npm run build   # output in dist/
 ```
 
-Set `VITE_API_URL` to your deployed backend URL.  
-Make sure `CLIENT_ORIGINS` on the backend includes your admin domain.
+Deployed as a Render Static Site: https://airbnb-clone-admin.onrender.com
+(Build command `npm install && npm run build`, publish directory `dist`, with
+a `/*` → `/index.html` rewrite rule for React Router. See
+`../airbnb-clone-backend/README.md` for full deploy steps.)
+
+Set `VITE_API_URL=https://airbnb-clone-backend-xmit.onrender.com/api`.
+Make sure `CLIENT_ORIGINS` on the backend includes this admin domain.

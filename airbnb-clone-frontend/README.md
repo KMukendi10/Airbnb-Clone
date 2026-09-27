@@ -18,7 +18,7 @@ details with a cost calculator, user authentication and a reservations view.
 |---|---|---|
 | `/` | `Home` | Hero, inspiration grid, experiences, gift cards, getaways tabs, hosting banner |
 | `/locations` | `Location` | Search results grid with filter chips and ?location= param |
-| `/locations/:id` | `LocationDetails` | Gallery, host info, amenities, ratings, sticky cost calculator |
+| `/locations/:id` | `LocationDetails` | Gallery, host info, amenities, ratings, sticky cost calculator, availability calendar |
 | `/login` | `Login` | Log in / sign up card with role selector |
 | `/reservations` | `Reservations` | "My Trips" — protected, shows user's bookings as cards |
 
@@ -56,6 +56,7 @@ src/
 - **Responsive** — all pages stack gracefully down to 320 px.
 - **Auth** — JWT stored in `localStorage` under `'token'`; re-hydrated on refresh via `GET /api/users/me`.
 - **Cost calculator** — recalculates on every date change using `useMemo`; weekly discount applies at 7+ nights; cost is validated server-side before saving.
+- **Availability calendar** — reads the listing's already-booked date ranges (plus a 1-day cleaning buffer) and disables those days so a guest can't select dates the backend would reject. If a booking still loses a race to another guest, the API returns `409` and the calendar refetches to show the up-to-date availability.
 - **Accessibility** — semantic HTML, `aria-*` attributes, accessible focus styles, `role="status"` on live feedback.
 
 ## Build & Deploy
@@ -64,7 +65,9 @@ src/
 npm run build   # output in dist/
 ```
 
-Deploy the `dist/` folder to any static host (Netlify, Vercel, GitHub Pages, or
-Heroku with the static buildpack).
+Deployed as a Render Static Site: https://airbnb-clone-frontend-46hl.onrender.com
+(Build command `npm install && npm run build`, publish directory `dist`, with
+a `/*` → `/index.html` rewrite rule for React Router. See
+`../airbnb-clone-backend/README.md` for full deploy steps.)
 
-Set `VITE_API_URL` to your deployed backend URL before building for production.
+Set `VITE_API_URL=https://airbnb-clone-backend-xmit.onrender.com/api` before building for production.
