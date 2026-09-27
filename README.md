@@ -108,7 +108,7 @@ It manages:
 
 * User data
 * Property data
-* Booking operations
+* Booking operations, including concurrency-safe reservations so two guests can't double-book the same dates
 * Authentication
 * Authorisation
 * Database communication
@@ -140,6 +140,16 @@ Managing different types of users introduced the challenge of making sure users 
 Some issues required tracing problems across multiple layers of the application rather than looking at a single file or component.
 
 This helped me improve my ability to investigate problems systematically instead of immediately changing code without understanding the cause.
+
+### Preventing Double Bookings
+
+An early version of the booking flow only checked guest capacity before creating a reservation — it never checked whether the requested dates were already taken. Two guests booking the same or overlapping dates at the same time could both end up with a confirmed reservation.
+
+MongoDB doesn't offer SQL-style row locks, so I solved this with a single atomic `findOneAndUpdate` on the accommodation document: it checks for an overlapping date range and claims the new range in one indivisible database operation. Because MongoDB serializes writes to a single document, only one of two simultaneous requests for conflicting dates can win; the other is rejected with a clear "dates unavailable" response instead of silently creating a conflicting booking. I also added a one-day buffer around each booking so back-to-back same-day turnovers (e.g. for cleaning) are blocked, and made sure a cancelled reservation releases its held dates again.
+
+On the frontend, the booking calendar now reads the listing's already-booked (and buffered) dates and disables them, so guests can't even select a range the backend would reject.
+
+This was my first real encounter with a concurrency problem — understanding *why* a check-then-insert pattern isn't safe under simultaneous requests, and how atomic single-document operations solve it without needing full multi-document transactions.
 
 ---
 
@@ -173,6 +183,7 @@ The project gave me practical experience building a complete full-stack applicat
 * Connected a React frontend to a backend API
 * Worked with database-driven application data
 * Implemented authentication and access control
+* Implemented concurrency-safe booking logic to prevent double bookings, including a cleaning-buffer rule between stays
 * Developed a separate admin application
 * Practised managing data across multiple application layers
 * Improved my debugging and problem-solving skills
@@ -266,7 +277,6 @@ Airbnb-Clone/
 ## Future Improvements
 
 * Advanced search and filtering
-* Improved availability management
 * Online payment integration
 * Reviews and ratings
 * Map-based property discovery
